@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peace Personality Quiz</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Georgia", serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #333;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 600px;
+        width: 90%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        color: #4a5568;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .peace-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+        animation: gentle-float 3s ease-in-out infinite;
+      }
+
+      @keyframes gentle-float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .subtitle {
+        color: #718096;
+        font-size: 1.1em;
+        font-style: italic;
+      }
+
+      .question-container {
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fade-in 0.5s forwards;
+      }
+
+      @keyframes fade-in {
+        to {
+          opacity: 1;
+        }
+      }
+
+      .question {
+        font-size: 1.3em;
+        margin-bottom: 20px;
+        color: #2d3748;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .question-number {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: 0.9em;
+      }
+
+      .options {
+        display: grid;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .option {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        border: 2px solid transparent;
+        border-radius: 15px;
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1em;
+        text-align: center;
+      }
+
+      .option:hover {
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .option.selected {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-color: #4c51bf;
+        transform: scale(1.02);
+      }
+
+      .next-btn {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 15px 30px;
+        font-size: 1.1em;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+        min-width: 120px;
+      }
+
+      .next-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+      }
+
+      .next-btn:disabled {
+        background: #a0aec0;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .progress-bar {
+        background: #e2e8f0;
+        border-radius: 10px;
+        height: 8px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        height: 100%;
+        width: 0%;
+        transition: width 0.5s ease;
+      }
+
+      .result-container {
+        text-align: center;
+        display: none;
+      }
+
+      .personality-icon {
+        font-size: 4em;
+        margin-bottom: 20px;
+        animation: gentle-bounce 2s ease-in-out infinite;
+      }
+
+      @keyframes gentle-bounce {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .personality-title {
+        font-size: 2.2em;
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .personality-description {
+        font-size: 1.2em;
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .score-display {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        font-size: 1.1em;
+        color: #2d3748;
+      }
+
+      .restart-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 15px 30px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .restart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .hidden {
+        display: none;
+      }
+      /* Navbar container */
+      .navbar {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1001; /* keeps navbar above other elements */
+      }
+
+      /* Menu icon (hamburger) */
+      .menu-icon {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        position: relative;
+        z-index: 1002; /* ensures it's always clickable */
+      }
+
+      .menu-icon span {
+        height: 3px;
+        width: 25px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      /* Navigation links */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        height: 100%;
+        width: 150px;
+        background: #444;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: right 0.3s ease;
+        z-index: 1000; /* ensures menu appears above content */
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      /* Animation for icon when active */
+      .menu-icon.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .menu-icon.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .menu-icon.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="menu-icon" id="menuIcon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a href="../index.html">Home</a>
+      <a href="j.html">About Us</a>
+      <a href="charts.html">Charts</a>
+      <a href="game.html">Game</a>
+      <a href="index1.html">Timeline</a>
+    </div>
+    <div class="container">
+      <div class="header">
+        <div class="peace-icon"><img src="../images/logo1.png" width="200"></img></div>
+        <h1>Peace Personality Quiz</h1>
+        <p class="subtitle">Discover your inner peaceful nature</p>
+      </div>
+
+      <div id="quiz-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div class="question-container" id="question-container">
+          <div class="question" id="question"></div>
+          <div class="options" id="options"></div>
+          <button
+            class="next-btn"
+            id="next-btn"
+            onclick="nextQuestion()"
+            disabled
+          >
+            Next Question
+          </button>
+        </div>
+      </div>
+
+      <div class="result-container" id="result-container">
+        <div class="personality-icon" id="personality-icon"></div>
+        <div class="personality-title" id="personality-title"></div>
+        <div class="score-display" id="score-display"></div>
+        <div class="personality-description" id="personality-description"></div>
+        <button class="restart-btn" onclick="restartQuiz()">
+          Take Quiz Again
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question:
+            "When someone disagrees with you strongly, what's your first instinct?",
+          options: [
+            {
+              text: "Listen carefully to understand their perspective",
+              points: 1,
+            },
+            { text: "Argue back to prove your point", points: 0.3 },
+            { text: "Try to find common ground", points: 0.8 },
+            { text: "Walk away to avoid conflict", points: 0.6 },
+          ],
+        },
+        {
+          question: "How do you handle stress and pressure?",
+          options: [
+            { text: "Take deep breaths and meditate", points: 1 },
+            { text: "Get frustrated and vent on others", points: 0.2 },
+            { text: "Try to stay calm and think logically", points: 0.7 },
+            { text: "Distract yourself with activities", points: 0.5 },
+          ],
+        },
+        {
+          question: "What's your approach to help others?",
+          options: [
+            { text: "Always put others' needs before my own", points: 1 },
+            { text: "Help when it's convenient for me", points: 0.4 },
+            { text: "Offer support when asked", points: 0.7 },
+            { text: "Focus on helping those closest to me", points: 0.6 },
+          ],
+        },
+        {
+          question: "How do you react when someone is rude to you?",
+          options: [
+            { text: "Respond with kindness and understanding", points: 1 },
+            { text: "Give them a taste of their own medicine", points: 0.1 },
+            { text: "Stay polite but keep your distance", points: 0.6 },
+            { text: "Try to understand what made them upset", points: 0.8 },
+          ],
+        },
+        {
+          question: "What motivates you most in life?",
+          options: [
+            { text: "Making the world a better place for everyone", points: 1 },
+            { text: "Achieving personal success and recognition", points: 0.3 },
+            { text: "Building meaningful relationships", points: 0.8 },
+            { text: "Finding inner peace and happiness", points: 0.9 },
+          ],
+        },
+        {
+          question: "How do you handle mistakes you've made?",
+          options: [
+            { text: "Take full responsibility and make amends", points: 1 },
+            { text: "Blame circumstances or others", points: 0.1 },
+            { text: "Learn from it and move forward", points: 0.7 },
+            { text: "Feel guilty but eventually forgive myself", points: 0.6 },
+          ],
+        },
+        {
+          question: "What's your view on forgiveness?",
+          options: [
+            { text: "Forgive everyone, always, no matter what", points: 1 },
+            { text: "Some things are unforgivable", points: 0.2 },
+            {
+              text: " Will Forgive eventually, but it you will time",
+              points: 0.6,
+            },
+            { text: "Forgive when people show genuine remorse", points: 0.8 },
+          ],
+        },
+        {
+          question: "How do you spend your free time?",
+          options: [
+            { text: "Volunteering and helping community causes", points: 1 },
+            { text: "Pursuing personal hobbies and interests", points: 0.5 },
+            { text: "Spending quality time with loved ones", points: 0.8 },
+            { text: "Reading, meditating, or self-reflection", points: 0.9 },
+          ],
+        },
+        {
+          question: "What's your approach to world problems?",
+          options: [
+            { text: "Actively work to create positive change", points: 1 },
+            {
+              text: "Focus on problems you can personally control",
+              points: 0.6,
+            },
+            { text: "Pray or send positive thoughts", points: 0.7 },
+            {
+              text: "Stay informed but avoid getting too involved",
+              points: 0.4,
+            },
+          ],
+        },
+        {
+          question: "How do you define true happiness?",
+          options: [
+            { text: "Seeing others happy and at peace", points: 1 },
+            { text: "Achieving your personal goals", points: 0.4 },
+            { text: "Having meaningful connections with others", points: 0.8 },
+            { text: "Living in harmony with myself and nature", points: 0.9 },
+          ],
+        },
+      ];
+
+      const personalities = {
+        9: {
+          title: "The Saint",
+          icon: "😇",
+          description:
+            "You embody pure compassion and selflessness. Your heart overflows with love for all beings, and you consistently choose kindness even in the face of adversity. You are a beacon of peace in this world.",
+        },
+        8: {
+          title: "The Peacemaker",
+          icon: "🕊️",
+          description:
+            "You are naturally gifted at bringing harmony to any situation. Your wisdom and gentle nature make you someone others turn to for guidance. You believe in the power of understanding and compromise.",
+        },
+        7: {
+          title: "The Harmonizer",
+          icon: "🌸",
+          description:
+            "You have a beautiful balance of compassion and wisdom. You seek to create positive change while maintaining inner peace. Your thoughtful approach to life inspires others to be better.",
+        },
+        6: {
+          title: "The Gentle Soul",
+          icon: "🌺",
+          description:
+            "You possess a kind heart and genuine care for others. While you may sometimes struggle with conflicts, your natural inclination is toward peace and understanding. You're learning to balance self-care with compassion.",
+        },
+        5: {
+          title: "The Seeker",
+          icon: "🌱",
+          description:
+            "You're on a journey toward greater peace and understanding. You have good intentions but sometimes get caught up in life's challenges. With continued growth, your peaceful nature will flourish.",
+        },
+        4: {
+          title: "The Balanced One",
+          icon: "⚖️",
+          description:
+            "You try to maintain equilibrium in your life, though you sometimes lean toward self-interest. You understand the value of peace but may struggle to always choose the peaceful path.",
+        },
+        3: {
+          title: "The Conflicted",
+          icon: "🌪️",
+          description:
+            "You have moments of great kindness mixed with periods of selfishness or conflict. You're aware that peace is valuable, but old habits and reactions sometimes get in the way of your better nature.",
+        },
+        2: {
+          title: "The Reactive",
+          icon: "⚡",
+          description:
+            "You often react quickly to situations without considering peaceful alternatives. While you're not intentionally harmful, your impulsive nature can create unnecessary conflict. Growth in mindfulness would serve you well.",
+        },
+        1: {
+          title: "The Challenger",
+          icon: "🔥",
+          description:
+            "You tend to approach life with intensity and may create conflict more often than peace. You likely have good intentions deep down, but your methods could use some refinement toward more harmonious approaches.",
+        },
+        0: {
+          title: "The Storm",
+          icon: "⛈️",
+          description:
+            "You often choose conflict over peace and may struggle with empathy and compassion. This is a wake-up call to examine your approach to relationships and consider how you can bring more harmony to your life and the lives of others.",
+        },
+      };
+
+      let currentQuestion = 0;
+      let totalScore = 0;
+      let selectedAnswer = null;
+
+      function loadQuestion() {
+        const question = questions[currentQuestion];
+        document.getElementById(
+          "question"
+        ).innerHTML = `<span class="question-number">${
+          currentQuestion + 1
+        }</span>${question.question}`;
+
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement("div");
+          optionElement.className = "option";
+          optionElement.textContent = option.text;
+          optionElement.onclick = () => selectOption(index, optionElement);
+          optionsContainer.appendChild(optionElement);
+        });
+
+        updateProgress();
+        document.getElementById("next-btn").disabled = true;
+        selectedAnswer = null;
+      }
+
+      function selectOption(index, element) {
+        // Remove selection from other options
+        document
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("selected"));
+
+        // Select current option
+        element.classList.add("selected");
+        selectedAnswer = index;
+        document.getElementById("next-btn").disabled = false;
+      }
+
+      function nextQuestion() {
+        if (selectedAnswer === null) return;
+
+        // Add points from selected answer
+        totalScore += questions[currentQuestion].options[selectedAnswer].points;
+
+        currentQuestion++;
+
+        if (currentQuestion < questions.length) {
+          loadQuestion();
+        } else {
+          showResults();
+        }
+      }
+
+      function updateProgress() {
+        const progress = (currentQuestion / questions.length) * 100;
+        document.getElementById("progress").style.width = progress + "%";
+      }
+
+      function showResults() {
+        document.getElementById("quiz-container").classList.add("hidden");
+        document.getElementById("result-container").style.display = "block";
+
+        // Calculate final score out of 10
+        const finalScore = Math.round(totalScore);
+
+        // Get personality based on score
+        let personality = personalities[finalScore];
+        if (!personality) {
+          // Find the closest score
+          const scores = Object.keys(personalities)
+            .map(Number)
+            .sort((a, b) => b - a);
+          const closestScore = scores.find((score) => finalScore >= score);
+          personality = personalities[closestScore];
+        }
+
+        document.getElementById("personality-icon").textContent =
+          personality.icon;
+        document.getElementById("personality-title").textContent =
+          personality.title;
+        document.getElementById(
+          "score-display"
+        ).innerHTML = `<strong>Your Peace Score: ${finalScore}/10</strong>`;
+        document.getElementById("personality-description").textContent =
+          personality.description;
+      }
+
+      function restartQuiz() {
+        currentQuestion = 0;
+        totalScore = 0;
+        selectedAnswer = null;
+
+        document.getElementById("quiz-container").classList.remove("hidden");
+        document.getElementById("result-container").style.display = "none";
+
+        loadQuestion();
+      }
+
+      // Start the quiz
+      loadQuestion();
+
+      const menuIcon = document.getElementById("menuIcon");
+      const navLinks = document.getElementById("navLinks");
+
+      menuIcon.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        menuIcon.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Nobel Peace Prize Winners</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* Navbar container */
+      .navbar {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1001; /* keeps navbar above other elements */
+      }
+
+      /* Menu icon (hamburger) */
+      .menu-icon {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        position: relative;
+        z-index: 1002; /* ensures it's always clickable */
+      }
+
+      .menu-icon span {
+        height: 3px;
+        width: 25px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      /* Navigation links */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        height: 100%;
+        width: 150px;
+        background: #444;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: right 0.3s ease;
+        z-index: 1000; /* ensures menu appears above content */
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      /* Animation for icon when active */
+      .menu-icon.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .menu-icon.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .menu-icon.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        animation: fadeInDown 1s ease-out;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+      }
+
+      .winners-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 40px;
+      }
+
+      .winner-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.8s ease-out;
+        text-align: center;
+      }
+
+      .winner-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 20px;
+        border: 4px solid #f39c12;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        display: block;
+      }
+
+      .winner-card:hover .winner-image {
+        transform: scale(1.05);
+        border-color: #e74c3c;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+      }
+
+      .image-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        border: 4px solid #f39c12;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .winner-card:hover .image-placeholder {
+        transform: scale(1.05);
+        border-color: #e74c3c;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+      }
+
+      .winner-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ffd700, #ffed4e);
+        border-radius: 20px 20px 0 0;
+      }
+
+      .winner-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      }
+
+      .winner-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f39c12;
+        padding-bottom: 10px;
+      }
+
+      .year {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 15px;
+        text-align: center;
+        background: linear-gradient(45deg, #e74c3c, #f39c12);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .achievement {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #555;
+        font-style: italic;
+        text-align: center;
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(52, 152, 219, 0.1);
+        border-radius: 10px;
+        border-left: 4px solid #3498db;
+      }
+
+      .medal-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        animation: rotate 3s ease-in-out infinite;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes rotate {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        50% {
+          transform: rotate(10deg);
+        }
+      }
+
+      .winner-card:nth-child(even) {
+        animation-delay: 0.2s;
+      }
+
+      .winner-card:nth-child(3n) {
+        animation-delay: 0.4s;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 50px;
+        color: white;
+        opacity: 0.8;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .winners-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .winner-card {
+          padding: 20px;
+        }
+      }
+    </style>
+    <style>
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 999;
+      }
+      .modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-content {
+        background: white;
+        padding: 20px;
+        max-width: 500px;
+        max-height: 70vh;
+        overflow-y: auto;
+        border-radius: 10px;
+        animation: slideIn 0.4s ease;
+      }
+      .close-btn {
+        font-size: 1.5rem;
+        cursor: pointer;
+        float: right;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <img src="../images/logo1.png" width="25"></img>
+      <div class="menu-icon" id="menuIcon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a href="../index.html">Home</a>
+      <a href="j.html">About Us</a>
+      <a href="charts.html">Charts</a>
+      <a href="game.html">Game</a>
+      <a href="index1.html">Timeline</a>
+    </div>
+    <div class="container">
+      <div class="header">
+        <h1>🕊️ Nobel Peace Prize Winners 🕊️</h1>
+        <p>Celebrating Champions of Peace and Human Rights</p>
+      </div>
+      <div class="winners-grid">
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img
+              src="../images/Martin_Luther_King_Jr_NYWTS-fotor-2025081282046.png"
+              width="150"
+            />
+          </div>
+          <div class="winner-name">Martin Luther King Jr.</div>
+          <div class="year">1964</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            "For his non-violent struggle for civil rights for the Afro-American
+            population"
+          </div>
+          <button class="more-info-btn" data-person="Martin_Luther_King_Jr.">
+            More Info
+          </button>
+        </div>
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img
+              src="../images/Jane_Addams-fotor-2025081211040.png"
+              width="150"
+            />
+          </div>
+          <div class="winner-name">Jane Addams</div>
+          <div class="year">1931</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            Social reformer and peace activist who founded Hull House and worked
+            for international peace
+          </div>
+          <button class="more-info-btn" data-person="Jane_Addams">
+            More Info
+          </button>
+        </div>
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img
+              src="../images/Rigoberta_Menchu-fotor-2025081211952.png"
+              width="150"
+            />
+          </div>
+          <div class="winner-name">Rigoberta Menchú</div>
+          <div class="year">1992</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            "In recognition of her work for social justice and ethno-cultural
+            reconciliation based on respect for the rights of indigenous
+            peoples"
+          </div>
+          <button class="more-info-btn" data-person="Rigoberta_Menchú">
+            More Info
+          </button>
+        </div>
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img
+              src="../images/elie wieslel-Picsart-AiImageEnhancer-fotor-20250812104716.png"
+              width="150"
+            />
+          </div>
+          <div class="winner-name">Elie Wiesel</div>
+          <div class="year">1986</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            Holocaust survivor and author who dedicated his life to ensuring the
+            world never forgets the horrors of genocide
+          </div>
+          <button class="more-info-btn" data-person="Elie_Wiesel">
+            More Info
+          </button>
+        </div>
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img src="../images/albert-fotor-2025081211537.png" width="200" />
+          </div>
+          <div class="winner-name">Albert Schweitzer</div>
+          <div class="year">1952</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            Theologian, musician, philosopher, and physician who devoted his
+            life to serving humanity in Africa
+          </div>
+          <button class="more-info-btn" data-person="Albert_Schweitzer">
+            More Info
+          </button>
+        </div>
+        <div class="winner-card">
+          <div class="image-placeholder">
+            <img
+              src="../images/images-Picsart-AiImageEnhancer-fotor-2025081210719.png"
+              width="100"
+            />
+          </div>
+          <div class="winner-name">Kailash Satyarthi</div>
+          <div class="year">2014</div>
+          <div class="medal-icon">🥇</div>
+          <div class="achievement">
+            "For their struggle against the suppression of children and young
+            people and for the right of all children to education"
+          </div>
+          <button class="more-info-btn" data-person="Kailash_Satyarthi">
+            More Info
+          </button>
+        </div>
+      </div>
+      <div class="footer">
+        <p>
+          These remarkable individuals have dedicated their lives to promoting
+          peace, justice, and human dignity around the world.
+        </p>
+      </div>
+    </div>
+    <script>
+      // Add interactive elements
+      document.addEventListener("DOMContentLoaded", function () {
+        const cards = document.querySelectorAll(".winner-card");
+
+        cards.forEach((card, index) => {
+          card.style.animationDelay = `${index * 0.1}s`;
+
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-15px) scale(1.02)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0) scale(1)";
+          });
+        });
+      });
+    </script>
+    <div class="modal hidden" id="modal-Martin_Luther_King_Jr.">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Martin Luther King Jr.</h2>
+        <p>
+          Martin Luther King Jr. (1929–1968) was an American Baptist minister
+          and civil rights leader who championed nonviolent resistance to combat
+          racial inequality. His leadership in events such as the Montgomery Bus
+          Boycott and the March on Washington, where he delivered his famous 'I
+          Have a Dream' speech, cemented his legacy as one of the most
+          influential figures in American history. He was awarded the Nobel
+          Peace Prize in 1964 for his tireless struggle for civil rights.
+        </p>
+      </div>
+    </div>
+    <div class="modal hidden" id="modal-Jane_Addams">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Jane Addams</h2>
+        <p>Jane Addams (1860-1935) was a pioneering social worker and activist, best known for co-founding Hull House in Chicago. This settlement house provided vital services and education to a diverse community of immigrants. A dedicated advocate for social justice, she fought for women's suffrage, peace, and public health. For her tireless efforts, Addams became the first American woman to win the Nobel Peace Prize in 1931.</p>
+      </div>
+    </div>
+    <div class="modal hidden" id="modal-Rigoberta_Menchú">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Rigoberta Menchú</h2>
+        <p>Rigoberta Menchú Tum is a Guatemalan human rights activist and Nobel Peace Prize laureate. A K'iche' Maya woman, she rose to international prominence for her advocacy on behalf of Guatemala's Indigenous peoples during and after the country's civil war. Her powerful testimony and dedication to social justice and ethno-cultural reconciliation earned her the Nobel Peace Prize in 1992, making her the first Indigenous person to receive the award.</p>
+      </div>
+    </div>
+    <div class="modal hidden" id="modal-Elie_Wiesel">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Elie Wiesel</h2>
+        <p>Elie Wiesel (1928-2016) was a Holocaust survivor, writer, and activist. A survivor of Auschwitz and Buchenwald, his memoir Night is a powerful testament to the horrors he endured. Wiesel dedicated his life to combating indifference and injustice, using his voice to ensure the world would never forget the Holocaust. He was awarded the Nobel Peace Prize in 1986 for his work as a "messenger to mankind."</p>
+      </div>
+    </div>
+    <div class="modal hidden" id="modal-Albert_Schweitzer">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Albert Schweitzer</h2>
+        <p>Albert Schweitzer (1875-1965) was a German-French polymath—a theologian, musician, and physician. He is most famous for establishing a hospital in Lambaréné, Gabon, where he spent his life serving the sick. His philosophy of "Reverence for Life" was central to his humanitarian work. He was awarded the Nobel Peace Prize in 1952 for his medical mission work and dedication to creating a "brotherhood between men and nations."</p>
+      </div>
+    </div>
+    <div class="modal hidden" id="modal-Kailash_Satyarthi">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Kailash Satyarthi</h2>
+        <p>Kailash Satyarthi (born 1954) is an Indian social reformer known for his relentless fight against child labor. He founded the Bachpan Bachao Andolan (Save the Childhood Movement) to rescue and rehabilitate children from exploitation. For his work in promoting the right of all children to education, he was awarded the Nobel Peace Prize in 2014, sharing it with Malala Yousafzai.</p>
+      </div>
+    </div>
+    <script>
+      document.querySelectorAll(".more-info-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const modal = document.getElementById(
+            `modal-${button.dataset.person}`
+          );
+          modal.classList.add("show");
+        });
+      });
+      document.querySelectorAll(".close-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btn.closest(".modal").classList.remove("show");
+        });
+      });
+      window.addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal")) {
+          e.target.classList.remove("show");
+        }
+      });
+      const menuIcon = document.getElementById("menuIcon");
+      const navLinks = document.getElementById("navLinks");
+
+      menuIcon.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        menuIcon.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice for Peace</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Enhanced animated gradient background */
+      body {
+        background: linear-gradient(
+          45deg,
+          #667eea 0%,
+          #764ba2 12.5%,
+          #f093fb 25%,
+          #b14b59 37.5%,
+          #4facfe6e 50%,
+          #41f2fc71 62.5%,
+          #43e97b 75%,
+          #2da58fb0 87.5%,
+          #667eea 100%
+        );
+        background-size: 800% 800%;
+        animation: gradientWave 15s ease infinite;
+        color: #2c5f71;
+        overflow-x: hidden;
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      @keyframes gradientWave {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        14% {
+          background-position: 25% 25%;
+        }
+        28% {
+          background-position: 50% 75%;
+        }
+        42% {
+          background-position: 75% 25%;
+        }
+        56% {
+          background-position: 100% 50%;
+        }
+        70% {
+          background-position: 75% 75%;
+        }
+        84% {
+          background-position: 50% 25%;
+        }
+      }
+
+      /* Floating Peace Elements */
+      .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .peace-quote {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 15px 20px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        animation: floatUpDown 20s ease-in-out infinite;
+        max-width: 300px;
+        font-style: italic;
+        text-align: center;
+        opacity: 0;
+        animation-fill-mode: forwards;
+      }
+
+      .peace-symbol {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0;
+        animation: floatSymbol 15s ease-in-out infinite;
+        animation-fill-mode: forwards;
+        color: rgba(255, 255, 255, 0.8);
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+      }
+
+      @keyframes floatUpDown {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.8;
+        }
+        50% {
+          transform: translateY(-10vh) rotate(5deg);
+          opacity: 1;
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(10deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes floatSymbol {
+        0% {
+          transform: translateY(100vh) scale(0.5) rotate(0deg);
+          opacity: 0;
+        }
+        15% {
+          opacity: 0.9;
+        }
+        50% {
+          transform: translateY(50vh) scale(1.2) rotate(180deg);
+          opacity: 1;
+        }
+        85% {
+          opacity: 0.9;
+        }
+        100% {
+          transform: translateY(-20vh) scale(0.8) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .peace-quote:nth-child(1) {
+        left: 10%;
+        animation-delay: 0s;
+      }
+      .peace-quote:nth-child(2) {
+        left: 70%;
+        animation-delay: 3s;
+      }
+      .peace-quote:nth-child(3) {
+        left: 40%;
+        animation-delay: 6s;
+      }
+      .peace-quote:nth-child(4) {
+        left: 80%;
+        animation-delay: 9s;
+      }
+      .peace-quote:nth-child(5) {
+        left: 20%;
+        animation-delay: 12s;
+      }
+
+      .peace-symbol:nth-child(6) {
+        left: 15%;
+        animation-delay: 2s;
+      }
+      .peace-symbol:nth-child(7) {
+        left: 60%;
+        animation-delay: 5s;
+      }
+      .peace-symbol:nth-child(8) {
+        left: 85%;
+        animation-delay: 8s;
+      }
+      .peace-symbol:nth-child(9) {
+        left: 35%;
+        animation-delay: 11s;
+      }
+      .peace-symbol:nth-child(10) {
+        left: 75%;
+        animation-delay: 14s;
+      }
+
+      /* Enhanced Navigation Bar */
+      .navbar {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        z-index: 1000;
+        padding: 20px 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: navSlideDown 1s ease-out;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      @keyframes navSlideDown {
+        0% {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .navbar.scrolled {
+        background: rgba(0, 0, 0, 0.85);
+        border-bottom: 2px solid rgba(135, 206, 235, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        padding: 15px 0;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+      }
+
+      .nav-logo {
+        font-family: "Kanit", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.4s ease;
+        position: relative;
+        padding: 8px 16px;
+        border-radius: 30px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-logo::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 30px;
+        background: linear-gradient(
+          135deg,
+          rgba(135, 206, 235, 0.3),
+          rgba(255, 255, 255, 0.1)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+      }
+
+      .nav-logo:hover::before {
+        opacity: 1;
+      }
+      .nav-logo:hover {
+        transform: scale(1.08) translateY(-2px);
+        text-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 25px rgba(135, 206, 235, 0.3);
+      }
+
+      .nav-logo-icon {
+        font-size: 2rem;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        animation: logoIconPulse 3s ease-in-out infinite;
+      }
+
+      @keyframes logoIconPulse {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(10deg);
+        }
+      }
+
+      .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50px;
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .nav-item {
+        position: relative;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 12px 20px;
+        border-radius: 25px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        display: block;
+        letter-spacing: 0.5px;
+      }
+
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(135, 206, 235, 0.4),
+          rgba(255, 255, 255, 0.2)
+        );
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: -1;
+        border-radius: 25px;
+      }
+
+      .nav-link:hover::before {
+        left: 0;
+      }
+      .nav-link:hover {
+        color: white;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(135, 206, 235, 0.4);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .nav-link.active {
+        background: linear-gradient(
+          135deg,
+          rgba(135, 206, 235, 0.3),
+          rgba(255, 255, 255, 0.1)
+        );
+        color: white;
+        box-shadow: 0 5px 15px rgba(135, 206, 235, 0.3);
+      }
+
+      .nav-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .nav-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .nav-toggle span {
+        width: 28px;
+        height: 3px;
+        background: linear-gradient(135deg, #ffffff, #87ceeb);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      }
+
+      /* Background effects */
+      .bg-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .shape {
+        position: absolute;
+        opacity: 0.1;
+        animation: floatShape 20s linear infinite;
+      }
+
+      .shape-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ffffff, #f0f8ff);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+      }
+
+      .shape-triangle {
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        border-bottom: 50px solid rgba(255, 255, 255, 0.6);
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+      }
+
+      .shape-square {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.4),
+          rgba(255, 255, 255, 0.8)
+        );
+        transform: rotate(45deg);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+      }
+
+      @keyframes floatShape {
+        0% {
+          transform: translateY(100vh) rotate(0deg) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.1;
+        }
+        90% {
+          opacity: 0.1;
+        }
+        100% {
+          transform: translateY(-100px) rotate(360deg) scale(1.2);
+          opacity: 0;
+        }
+      }
+
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, #ffffff, transparent);
+        border-radius: 50%;
+        animation: sparkle 6s ease-in-out infinite;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      }
+
+      @keyframes sparkle {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0) rotate(0deg);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.5) rotate(180deg);
+        }
+      }
+
+      .glass-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(1px);
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      /* Hero section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        text-align: center;
+        z-index: 10;
+        padding: 100px 20px 0 20px;
+      }
+
+      .logo-container {
+        margin-bottom: 40px;
+        position: relative;
+      }
+
+      .logo {
+        width: 180px;
+        height: 180px;
+        position: relative;
+        margin: 0 auto;
+        animation: logoFloat 4s ease-in-out infinite;
+      }
+
+      .logo-bg {
+        width: 200px;
+        height: 200px;
+        position: relative;
+      }
+
+      .logo-bg::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        animation: logoShine 3s linear infinite;
+      }
+
+      @keyframes logoShine {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .logo-content {
+        position: relative;
+        z-index: 2;
+        font-size: 80px;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      }
+
+      @keyframes logoFloat {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-15px) scale(1.05);
+        }
+      }
+
+      h1 {
+        font-family: "Kanit", sans-serif;
+        font-size: 5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2d5aa0, #00bcd4, #4caf50, #ff9800);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShimmer 8s ease-in-out infinite, fadeInUp 1.5s ease-out;
+        margin-bottom: 24px;
+        line-height: 1.1;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        position: relative;
+      }
+
+      @keyframes textShimmer {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        25% {
+          background-position: 50% 100%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        75% {
+          background-position: 50% 0%;
+        }
+      }
+
+      .subtitle {
+        font-size: 1.4rem;
+        font-weight: 500;
+        max-width: 700px;
+        color: rgba(4, 0, 255, 0.95);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 2s ease-out 0.5s both;
+        margin-bottom: 16px;
+        line-height: 1.6;
+      }
+
+      .description {
+        font-size: 1.3rem;
+        max-width: 650px;
+        color: rgba(47, 0, 255, 0.85);
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        animation: fadeInUp 2.5s ease-out 1s both;
+        margin-bottom: 50px;
+        line-height: 1.7;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        animation: fadeInUp 3s ease-out 1.5s both;
+      }
+
+      .btn {
+        position: relative;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 16px 32px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+      .btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 45px rgba(31, 38, 135, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .btn:active {
+        transform: translateY(-1px) scale(1.02);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      /* FIXED: Center aligned scroll indicator */
+      .scroll-indicator {
+        position: absolute;
+        bottom: 3px;
+        left: 46.8%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+        text-align: center;
+        animation: fadeInUp 4s ease-out 2s both;
+        font-weight: 500;
+        z-index: 10;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .scroll-indicator:hover {
+        color: rgba(255, 255, 255, 1);
+        transform: translateX(-50%) scale(1.1);
+      }
+
+      .scroll-arrow {
+        display: block;
+        margin-top: 12px;
+        font-size: 1.5rem;
+        animation: bounce 2.5s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* Section styles */
+      .section {
+        min-height: 100vh;
+        position: relative;
+        padding: 100px 20px;
+        overflow: hidden;
+      }
+
+      .section-content {
+        position: relative;
+        z-index: 10;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: #ffffff;
+        animation: contentFadeIn 1.5s ease-out;
+      }
+
+      .section-title {
+        font-family: "Kanit", sans-serif;
+        font-size: 4rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 60px;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #e6e6fa 25%,
+          #87ceeb 50%,
+          #ffffff 75%,
+          #f0f8ff 100%
+        );
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        animation: titleShine 4s ease-in-out infinite, fadeInUp 1s ease-out;
+      }
+      .section-title-emoji{
+  	font-family: "Kanit", sans-serif;
+        font-size: 4rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 60px;
+	}
+
+      @keyframes titleShine {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        25% {
+          background-position: 100% 50%;
+        }
+        50% {
+          background-position: 200% 50%;
+        }
+        75% {
+          background-position: 300% 50%;
+        }
+      }
+
+      /* Explore Section - Peace Stories */
+      .explore-section {
+        background: radial-gradient(
+            ellipse 150% 800px at center top,
+            rgba(102, 126, 234, 0.12) 0%,
+            rgba(118, 75, 162, 0.08) 20%,
+            rgba(245, 87, 108, 0.06) 30%,
+            rgba(79, 172, 254, 0.04) 40%,
+            rgba(0, 242, 254, 0.03) 50%,
+            transparent 60%
+          ),
+          linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(40, 20, 60, 0.4) 30%,
+            rgba(30, 15, 45, 0.7) 50%,
+            rgba(20, 10, 30, 0.85) 70%,
+            rgba(15, 8, 25, 0.95) 85%,
+            #1a0d1f 100%
+          );
+        margin-top: -1px;
+      }
+
+      .story-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+      }
+
+      .story-card {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.06)
+        );
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(135, 206, 235, 0.2);
+        border-radius: 25px;
+        padding: 40px 30px;
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+        transform: translateY(50px);
+        opacity: 0;
+        animation: cardPopIn 0.8s ease-out forwards;
+      }
+
+      @keyframes cardPopIn {
+        0% {
+          transform: translateY(50px) scale(0.9);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .story-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .story-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .story-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .story-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .story-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .story-card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      .story-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #87ceeb, transparent);
+        animation: cardShimmer 3s ease-in-out infinite;
+      }
+
+      .story-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        border-color: rgba(135, 206, 235, 0.5);
+        box-shadow: 0 25px 50px rgba(135, 206, 235, 0.2);
+      }
+
+      .story-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #87ceeb, #ffffff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px auto;
+        font-size: 2.5rem;
+        animation: iconFloat 3s ease-in-out infinite;
+        box-shadow: 0 10px 30px rgba(135, 206, 235, 0.3);
+      }
+
+      .story-title {
+        font-family: "Kanit", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #87ceeb;
+      }
+
+      .story-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.85);
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      .story-author {
+        font-style: italic;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        font-size: 0.95rem;
+      }
+
+      /* Mission Section - Our Values */
+      .mission-section {
+        background: linear-gradient(
+            180deg,
+            #1a0d1f 0%,
+            rgba(15, 25, 40, 0.95) 15%,
+            rgba(20, 30, 50, 0.85) 30%,
+            rgba(25, 40, 65, 0.7) 50%,
+            rgba(30, 50, 80, 0.4) 70%,
+            transparent 100%
+          ),
+          radial-gradient(
+            ellipse 200% 600px at center bottom,
+            rgba(79, 172, 254, 0.08) 0%,
+            rgba(0, 242, 254, 0.06) 30%,
+            transparent 70%
+          );
+        margin-top: -1px;
+      }
+
+      .mission-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+      }
+
+      .mission-card {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05)
+        );
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(135, 206, 235, 0.2);
+        border-radius: 25px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+        transform: translateY(50px);
+        opacity: 0;
+        animation: cardPopIn 0.8s ease-out forwards;
+      }
+
+      .mission-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .mission-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .mission-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .mission-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .mission-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .mission-card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      .mission-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #87ceeb, transparent);
+        animation: cardShimmer 3s ease-in-out infinite;
+      }
+
+      .mission-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        border-color: rgba(135, 206, 235, 0.5);
+        box-shadow: 0 25px 50px rgba(135, 206, 235, 0.2);
+      }
+
+      .mission-icon {
+        font-size: 4rem;
+        margin-bottom: 25px;
+        display: block;
+        animation: iconFloat 3s ease-in-out infinite;
+      }
+
+      .mission-card-title {
+        font-family: "Kanit", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #87ceeb;
+      }
+
+      .mission-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* About Peace Section */
+      .about-section {
+        background: radial-gradient(
+            ellipse 150% 800px at center top,
+            rgba(102, 126, 234, 0.08) 0%,
+            rgba(118, 75, 162, 0.06) 20%,
+            rgba(245, 87, 108, 0.04) 30%,
+            rgba(79, 172, 254, 0.03) 40%,
+            rgba(0, 242, 254, 0.02) 50%,
+            transparent 60%
+          ),
+          linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(30, 30, 40, 0.3) 30%,
+            rgba(20, 20, 25, 0.6) 50%,
+            rgba(10, 10, 12, 0.8) 70%,
+            rgba(5, 5, 8, 0.95) 85%,
+            #000000 100%
+          );
+        margin-top: -1px;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+        margin-top: 40px;
+      }
+
+      .info-card {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.04) 50%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 25px;
+        padding: 40px 30px;
+        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        animation: cardPulse 4s ease-in-out infinite;
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      .info-card:nth-child(1) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.1s, 0.1s;
+      }
+      .info-card:nth-child(2) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.2s, 0.2s;
+      }
+      .info-card:nth-child(3) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.3s, 0.3s;
+      }
+      .info-card:nth-child(4) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.4s, 0.4s;
+      }
+      .info-card:nth-child(5) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.5s, 0.5s;
+      }
+      .info-card:nth-child(6) {
+        animation: cardPopIn 0.8s ease-out forwards,
+          cardPulse 4s ease-in-out infinite;
+        animation-delay: 0.6s, 0.6s;
+      }
+
+      @keyframes cardPulse {
+        0%,
+        100% {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+            0 0 20px rgba(255, 255, 255, 0.05);
+        }
+        50% {
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3),
+            0 0 30px rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      .info-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.8),
+          rgba(135, 206, 235, 1),
+          rgba(255, 255, 255, 0.8),
+          transparent
+        );
+        animation: enhancedCardShimmer 6s ease-in-out infinite;
+      }
+
+      @keyframes enhancedCardShimmer {
+        0% {
+          left: -100%;
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        50% {
+          left: 100%;
+          opacity: 1;
+        }
+        51% {
+          opacity: 0;
+        }
+        100% {
+          left: 100%;
+          opacity: 0;
+        }
+      }
+
+      .info-card:hover {
+        transform: translateY(-20px) rotateX(8deg) rotateY(8deg) scale(1.03);
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.15) 0%,
+          rgba(255, 255, 255, 0.08) 50%,
+          rgba(255, 255, 255, 0.15) 100%
+        );
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5),
+          0 0 60px rgba(255, 255, 255, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        animation-play-state: paused;
+      }
+
+      .card-icon {
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        display: block;
+        text-align: center;
+        animation: iconFloat 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+        transition: all 0.3s ease;
+      }
+
+      @keyframes iconFloat {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+          filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+        }
+        50% {
+          transform: translateY(-10px) rotate(5deg);
+          filter: drop-shadow(0 5px 20px rgba(255, 255, 255, 0.5));
+        }
+      }
+
+      .info-card:hover .card-icon {
+        transform: translateY(-5px) scale(1.1) rotate(10deg);
+        filter: drop-shadow(0 10px 25px rgba(255, 255, 255, 0.6));
+      }
+
+      .card-title {
+        font-family: "Kanit", sans-serif;
+        font-size: 1.9rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        animation: titleGlow 2s ease-in-out infinite alternate;
+        transition: all 0.3s ease;
+      }
+
+      @keyframes titleGlow {
+        0% {
+          text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+          color: #ffffff;
+        }
+        100% {
+          text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+          color: #f0f8ff;
+        }
+      }
+
+      .info-card:hover .card-title {
+        text-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+        transform: scale(1.05);
+      }
+
+      .card-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.85);
+        text-align: justify;
+      }
+
+      .info-card.no-rotate:hover {
+        transform: translateY(-20px) scale(1.03);
+      }
+
+      /* Background effects */
+      .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .star {
+        position: absolute;
+        background: radial-gradient(
+          circle,
+          #ffffff 0%,
+          #e6f3ff 50%,
+          rgba(255, 255, 255, 0.8) 100%
+        );
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.9),
+          0 0 25px rgba(135, 206, 235, 0.6), 0 0 35px rgba(255, 255, 255, 0.4);
+        animation: brightTwinkle 2s ease-in-out infinite;
+      }
+
+      .star:nth-child(2n) {
+        animation: brightTwinkle 3s ease-in-out infinite;
+        animation-delay: 0.5s;
+        background: radial-gradient(
+          circle,
+          #87ceeb 0%,
+          #ffffff 50%,
+          rgba(135, 206, 235, 0.8) 100%
+        );
+      }
+
+      .star:nth-child(3n) {
+        animation: brightTwinkle 2.5s ease-in-out infinite;
+        animation-delay: 1s;
+        background: radial-gradient(
+          circle,
+          #e6e6fa 0%,
+          #ffffff 50%,
+          rgba(230, 230, 250, 0.9) 100%
+        );
+      }
+
+      @keyframes brightTwinkle {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: scale(1) rotate(0deg);
+          box-shadow: 0 0 15px rgba(255, 255, 255, 0.9),
+            0 0 25px rgba(135, 206, 235, 0.6), 0 0 35px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.5) rotate(180deg);
+          box-shadow: 0 0 25px rgba(255, 255, 255, 1),
+            0 0 40px rgba(135, 206, 235, 0.8), 0 0 50px rgba(255, 255, 255, 0.6);
+        }
+      }
+
+      @keyframes cardShimmer {
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      @keyframes contentFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(100px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .nav-menu {
+          position: fixed;
+          top: 85px;
+          left: -100%;
+          width: 100%;
+          height: calc(100vh - 85px);
+          background: rgba(0, 0, 0, 0.95);
+          backdrop-filter: blur(20px);
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          padding-top: 50px;
+          transition: left 0.3s ease;
+          border-radius: 0;
+          border: none;
+        }
+
+        .nav-menu.active {
+          left: 0;
+        }
+
+        .nav-item {
+          width: 80%;
+          margin-bottom: 10px;
+        }
+
+        .nav-link {
+          width: 100%;
+          text-align: center;
+          padding: 15px 20px;
+          font-size: 1.1rem;
+        }
+
+        .nav-toggle {
+          display: flex;
+        }
+
+        .nav-toggle.active span:nth-child(1) {
+          transform: rotate(45deg) translate(5px, 5px);
+        }
+        .nav-toggle.active span:nth-child(2) {
+          opacity: 0;
+        }
+        .nav-toggle.active span:nth-child(3) {
+          transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .hero {
+          padding: 120px 15px 0 15px;
+        }
+
+        h1 {
+          font-size: 3.5rem;
+        }
+        .logo {
+          width: 140px;
+          height: 140px;
+        }
+        .logo-content {
+          font-size: 60px;
+        }
+        .subtitle {
+          font-size: 1.2rem;
+        }
+        .description {
+          font-size: 1rem;
+        }
+        .button-group {
+          flex-direction: column;
+          align-items: center;
+        }
+        .btn {
+          width: 280px;
+          justify-content: center;
+        }
+
+        .section-title {
+          font-size: 3rem;
+        }
+        .info-grid,
+        .mission-grid,
+        .story-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+
+        .peace-quote {
+          font-size: 0.8rem;
+          max-width: 250px;
+          padding: 12px 16px;
+        }
+
+        .peace-symbol {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nav-logo {
+          font-size: 1.5rem;
+        }
+        .nav-logo-icon {
+          font-size: 1.8rem;
+        }
+
+        h1 {
+          font-size: 2.8rem;
+        }
+        .hero {
+          padding: 100px 15px 0 15px;
+        }
+        .logo {
+          width: 120px;
+          height: 120px;
+        }
+        .logo-content {
+          font-size: 50px;
+        }
+
+        .section-title {
+          font-size: 2.5rem;
+        }
+        .section {
+          padding: 80px 15px;
+        }
+        .card-title,
+        .mission-card-title,
+        .story-title {
+          font-size: 1.5rem;
+        }
+        /*Discover More */
+        .btn-discover-more {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.6)
+        );
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.5),
+          rgba(255, 255, 255, 0.8)
+        );
+      }
+
+      /* container: centers the button and keeps it inside hero */
+.discover-container{
+  position: relative;
+  z-index: 999;                /* sits above background effects */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 12px;            /* small gap only */
+  margin-bottom: 0;
+  pointer-events: none;        /* container doesn't block clicks; button will */
+  overflow: visible;
+}
+
+/* Floating Chat Button */
+#chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  color: white;
+  font-size: 22px;
+  padding: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 180, 255, 0.4);
+  z-index: 9999;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#chat-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 180, 255, 0.6);
+}
+
+/* Chat Widget */
+#chat-widget {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  background: #f0faff;
+  border-radius: 12px;
+  box-shadow: 0 6px 30px rgba(0, 150, 200, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(150%);
+  transition: transform 0.4s ease;
+  z-index: 9999;
+}
+
+/* Chat open state */
+#chat-widget.open {
+  transform: translateY(0);
+}
+
+/* Chat Header */
+.chat-header {
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Chat Messages */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+.bot-message {
+  background: #d8f4ff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  max-width: 80%;
+}
+
+/* Chat Input Area */
+.chat-input-area {
+  display: flex;
+  border-top: 1px solid #ccefff;
+}
+.chat-input-area input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  outline: none;
+}
+.chat-input-area button {
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  border: none;
+  padding: 0 14px;
+  color: white;
+  cursor: pointer;
+}
+
+
+/* the actual button */
+.btn.discover-btn{
+  pointer-events: auto;        /* clickable */
+  position: relative;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 44px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  /* eye-catching gradient + shimmer + pulse */
+  background: linear-gradient(90deg,#00e5ff,#0077ff,#00e5ff);
+  background-size: 200% 200%;
+  animation: shimmer 6s linear infinite, pulse 2.6s ease-in-out infinite;
+
+  box-shadow: 0 10px 30px rgba(0,123,255,0.25), inset 0 -4px 14px rgba(0,0,0,0.12);
+  transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+}
+
+/* shimmer & pulse */
+@keyframes shimmer{
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@keyframes pulse{
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+
+.btn.discover-btn:hover{
+  transform: scale(1.09) translateY(-4px);
+  box-shadow: 0 18px 50px rgba(0,123,255,0.45), 0 6px 20px rgba(0,123,255,0.22);
+}
+
+/* focus for accessibility */
+.btn.discover-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(0,123,255,0.14);
+}
+
+/* mobile */
+@media (max-width: 768px){
+  .btn.discover-btn { width: 280px; justify-content: center; }
+}
+.chat-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #ccefff;
+  background: #f0faff;
+}
+.chat-options button {
+  flex: 1 1 48%;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+.chat-options button:hover {
+  transform: scale(1.05);
+}
+/* Floating Chat Button */
+#chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  color: white;
+  font-size: 22px;
+  padding: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 180, 255, 0.4);
+  z-index: 9999;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#chat-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 180, 255, 0.6);
+}
+
+/* Chat Widget */
+#chat-widget {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  background: #f0faff;
+  border-radius: 12px;
+  box-shadow: 0 6px 30px rgba(0, 150, 200, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(150%);
+  transition: transform 0.4s ease;
+  z-index: 9999;
+}
+#chat-widget.open { transform: translateY(0); }
+
+/* Header */
+.chat-header {
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Messages */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+.bot-message, .user-message {
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  max-width: 80%;
+}
+.bot-message { background: #d8f4ff; }
+.user-message { background: #b3e6ff; align-self: flex-end; }
+
+/* Options */
+.chat-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #ccefff;
+  background: #f0faff;
+}
+.chat-options button {
+  flex: 1 1 48%;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+.chat-options button:hover {
+  transform: scale(1.05);
+}
+/* Navbar container */
+      .navbar {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1001; /* keeps navbar above other elements */
+      }
+
+      /* Menu icon (hamburger) */
+      .menu-icon {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        position: relative;
+        z-index: 1002; /* ensures it's always clickable */
+      }
+
+      .menu-icon span {
+        height: 3px;
+        width: 25px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      /* Navigation links */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        height: 100%;
+        width: 150px;
+        background: #444;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: right 0.3s ease;
+        z-index: 1000; /* ensures menu appears above content */
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      /* Animation for icon when active */
+      .menu-icon.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .menu-icon.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .menu-icon.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+
+
+    </style>
+  </head>
+  <body>
+    <!-- Floating Peace Elements -->
+    <div class="floating-elements">
+      <div class="peace-quote" data-delay="0">
+        "Peace begins with a smile" - Mother Teresa
+      </div>
+      <div class="peace-quote" data-delay="2">
+        "Be the change you wish to see in the world" - Gandhi
+      </div>
+      <div class="peace-quote" data-delay="4">
+        "An eye for an eye makes the whole world blind" - Gandhi
+      </div>
+      <div class="peace-quote" data-delay="6">
+        "Peace cannot be kept by force; it can only be achieved by
+        understanding" - Einstein
+      </div>
+      <div class="peace-quote" data-delay="8">
+        "If you want peace, work for justice" - Pope Paul VI
+      </div>
+
+      <div class="peace-symbol" data-delay="2">☮</div>
+      <div class="peace-symbol" data-delay="5">🕊️</div>
+      <div class="peace-symbol" data-delay="8">🌸</div>
+      <div class="peace-symbol" data-delay="11">🤝</div>
+      <div class="peace-symbol" data-delay="14">❤️</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon"><img src="images/logo1.png" width="35"></img></span>
+      <span>Voice for Peace</span>
+    </a>
+    <ul class="nav-menu" id="navMenu">
+      <li class="nav-item">
+        <a href="index.html" class="nav-link active">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="Files/index1.html" class="nav-link">Explore Timelines</a>
+      </li>
+      <li class="nav-item">
+        <a href="Files/noble.html" class="nav-link">Noble Peace Prize Winners</a>
+      </li>
+      <li class="nav-item">
+        <a href="Files/charts.html" class="nav-link">Charts</a>
+      </li>
+      <li class="nav-item">
+        <a href="Files/game.html" class="nav-link">Peace Game</a>
+      </li>
+    </ul>
+
+    <div class="nav-toggle" id="navToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+
+
+    <!-- Background shapes -->
+    <div class="bg-shapes" id="bgShapes"></div>
+
+    <!-- Animated particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Glass overlay -->
+    <div class="glass-overlay"></div>
+
+    <!-- Hero Section -->
+    <section class="hero section" id="home">
+      <div class="logo-container">
+        <div class="logo">
+          <div class="logo-bg">
+            <div class="logo-content"><img src="images/logo1.png" width="200"></img></div>
+          </div>
+        </div>
+      </div>
+
+      <h1 data-text="☮ Voice for Peace">☮ Voice for Peace</h1>
+
+      <p class="subtitle">
+        Spreading peace through unity, understanding, and hope
+      </p>
+
+      <p class="description">
+        Join us in advocating for a world without war and conflict. Explore
+        inspiring stories, discover our mission, and learn how you can
+        contribute to building a more peaceful world.
+      </p>
+
+      <div class="button-group">
+        <button class="btn" onclick="scrollToSection('explore')">
+          <span>📖</span>
+          <span>EXPLORE STORIES</span>
+        </button>
+
+        <button class="btn btn-secondary" onclick="scrollToSection('mission')">
+          <span>🎯</span>
+          <span>OUR VALUES</span>
+        </button>
+      </div>
+
+      <div class="scroll-indicator" onclick="scrollToSection('explore')">
+        <div></div>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- Explore Section - Peace Stories -->
+    <section class="explore-section section" id="explore">
+      <div class="stars" id="exploreStars"></div>
+
+      <div class="section-content">
+        <h2 class="section-title">Stories of Peace</h2>
+
+        <div class="story-grid">
+          <div class="story-card">
+            <div class="story-image"><img src="images/gandhi-logo.png" width = '200'></img></div>
+            <h3 class="story-title">Gandhi's Salt March</h3>
+            <div class="story-description">
+              In 1930, Mahatma Gandhi led a 240-mile peaceful protest against
+              British salt taxes, demonstrating the power of non-violent
+              resistance and inspiring millions worldwide.
+            </div>
+            <div class="story-author">- Mahatma Gandhi, India</div>
+          </div>
+
+          <div class="story-card">
+            <div class="story-image"><img src="images/Nelson-Mandela.png " width="130"></img></div>
+            <h3 class="story-title">Nelson Mandela's Reconciliation</h3>
+            <div class="story-description">
+              After 27 years in prison, Nelson Mandela chose forgiveness over
+              revenge, leading South Africa's peaceful transition from apartheid
+              to democracy.
+            </div>
+            <div class="story-author">- Nelson Mandela, South Africa</div>
+          </div>
+
+          <div class="story-card">
+            <div class="story-image"><img src="images/Wangari.png" width="130"></div>
+            <h3 class="story-title">Wangari's Green Belt</h3>
+            <div class="story-description">
+              Wangari Maathai mobilized women to plant trees, combining
+              environmental conservation with democracy and peace, earning her
+              the Nobel Peace Prize.
+            </div>
+            <div class="story-author">- Wangarĩ Maathai, Kenya</div>
+          </div>
+
+          <div class="story-card">
+            <div class="story-image"><img src="images/Berlin-wall.png" width="130"><img></div>
+            <h3 class="story-title">Berlin Wall's Fall</h3>
+            <div class="story-description">
+              In 1989, peaceful protests and the power of unity brought down the
+              Berlin Wall, symbolizing the triumph of freedom over division.
+            </div>
+            <div class="story-author">- Citizens of Berlin, Germany</div>
+          </div>
+
+          <div class="story-card">
+            <div class="story-image"><img src="images/malala.png" width="130"></img></div>
+            <h3 class="story-title">Malala's Education Campaign</h3>
+            <div class="story-description">
+              Despite facing violence, Malala Yousafzai continued advocating for
+              girls' education, showing that education is the most powerful
+              weapon for peace.
+            </div>
+            <div class="story-author">- Malala Yousafzai, Pakistan</div>
+          </div>
+
+          <div class="story-card">
+            <div class="story-image"><img src="images/mother-teresa.png" width="130"></img></div>
+            <h3 class="story-title">Mother Teresa's Compassion</h3>
+            <div class="story-description">
+              Mother Teresa dedicated her life to serving the poorest of the
+              poor, demonstrating that small acts of love can create waves of
+              peace.
+            </div>
+            <div class="story-author">- Mother Teresa, India</div>
+          </div>
+        </div>
+      </div>
+      <!-- Discover button: add BEFORE the </section> of the hero -->
+      <div class="discover-container">
+      <a href="Files/index1.html" class="btn discover-btn" role="button" aria-label="Discover more — go to next page">
+      <span class="discover-ico">🔎</span>
+      <span class="discover-text">DISCOVER MORE</span>
+      </a>
+      </div>
+
+    </section>
+
+    <!-- Mission Section - Our Values -->
+    <section class="mission-section section" id="mission">
+      <div class="stars" id="missionStars"></div>
+
+      <div class="section-content">
+        <h2 class="section-title">Our Core Values</h2>
+
+        <div class="mission-grid">
+          <div class="mission-card">
+            <div class="mission-icon">💝</div>
+            <h3 class="mission-card-title">Compassion</h3>
+            <div class="mission-description">
+              We believe in the power of empathy and understanding. By seeing
+              through others' eyes, we build bridges across all divides and
+              create connections that heal.
+            </div>
+          </div>
+
+          <div class="mission-card">
+            <div class="mission-icon">🌈</div>
+            <h3 class="mission-card-title">Unity in Diversity</h3>
+            <div class="mission-description">
+              Our differences make us stronger. We celebrate diverse cultures,
+              beliefs, and perspectives as the foundation for a richer, more
+              peaceful world.
+            </div>
+          </div>
+
+          <div class="mission-card">
+            <div class="mission-icon">🌱</div>
+            <h3 class="mission-card-title">Growth Through Understanding</h3>
+            <div class="mission-description">
+              Education and open dialogue are our tools for change. We grow
+              wiser together by sharing knowledge and learning from every
+              experience.
+            </div>
+          </div>
+
+          <div class="mission-card">
+            <div class="mission-icon">🤲</div>
+            <h3 class="mission-card-title">Service to Others</h3>
+            <div class="mission-description">
+              Peace begins with action. We serve our communities and support
+              those in need, knowing that every act of kindness creates ripples
+              of positive change.
+            </div>
+          </div>
+
+          <div class="mission-card">
+            <div class="mission-icon">🔮</div>
+            <h3 class="mission-card-title">Hope for Tomorrow</h3>
+            <div class="mission-description">
+              We are optimists who believe in humanity's potential. Our hope
+              fuels our commitment to building a better world for future
+              generations.
+            </div>
+          </div>
+
+          <div class="mission-card">
+            <div class="mission-icon">⚖️</div>
+            <h3 class="mission-card-title">Justice & Equality</h3>
+            <div class="mission-description">
+              True peace requires fairness for all. We advocate for equal
+              rights, social justice, and the dignity of every human being on
+              Earth.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Peace Section -->
+    <section class="about-section section" id="about-peace">
+      <div class="stars" id="aboutStars"></div>
+
+      <div class="section-content">
+        <h2 class="section-title">Understanding Peace</h2>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="card-icon">☮️</div>
+            <h3 class="card-title">What is Peace?</h3>
+            <div class="card-content">
+              Peace is more than just the absence of war or conflict. It
+              encompasses harmony, tranquility, and the presence of justice,
+              equality, and understanding among all people. True peace exists
+              when communities can thrive without fear, where differences are
+              resolved through dialogue, and where every individual has the
+              opportunity to live with dignity and respect.
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon">🕊️</div>
+            <h3 class="card-title">Types of Peace</h3>
+            <div class="card-content">
+              <strong>Negative Peace:</strong> The absence of direct violence
+              and war.<br /><br />
+              <strong>Positive Peace:</strong> The presence of social justice,
+              equality, and structural harmony that prevents conflicts from
+              arising.<br /><br />
+              <strong>Inner Peace:</strong> Personal tranquility and mental
+              harmony that contributes to peaceful relationships and
+              communities.
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon">🌍</div>
+            <h3 class="card-title">Global Peace Efforts</h3>
+            <div class="card-content">
+              International organizations like the United Nations, UNESCO, and
+              countless NGOs work tirelessly to promote peace through diplomacy,
+              education, humanitarian aid, and conflict resolution. From
+              peacekeeping missions to cultural exchange programs, these efforts
+              span across nations and communities to build bridges of
+              understanding.
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon">🤝</div>
+            <h3 class="card-title">Building Peace Together</h3>
+            <div class="card-content">
+              Every individual can contribute to peace through small but
+              meaningful actions: practicing empathy, engaging in respectful
+              dialogue, volunteering for humanitarian causes, supporting
+              conflict resolution initiatives, and fostering understanding
+              across cultural and social divides. Peace begins with each of us
+              and ripples outward to transform communities and nations.
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon">☮</div>
+            <h3 class="card-title">Symbol of Peace</h3>
+            <div class="card-content">
+              The concept of peace, an aspiration for harmony and tranquility
+              across the globe, has been encapsulated in various powerful
+              symbols throughout history. Among the most universally recognized
+              is the dove carrying an olive branch, a motif rooted in ancient
+              traditions and solidified by biblical narratives of hope after the
+              flood.
+            </div>
+          </div>
+          
+
+          <div class="info-card no-rotate">
+            <div class="card-icon">🤝</div>
+            <h3 class="card-title">Avenues of Peace</h3>
+            <div class="card-content">
+              There are many avenues to explore when striving to improve peace,
+              both individually and on a broader societal level. Fostering
+              empathy and understanding is a crucial starting point. This
+              involves actively listening to diverse perspectives, even those
+              that differ greatly from our own, and seeking to comprehend the
+              underlying motivations and experiences that shape people's views.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="discover-container">
+      <a href="Files/j.html" class="btn discover-btn" role="button" aria-label="Discover more — go to next page">
+      <span class="discover-ico">🔎</span>
+      <span class="discover-text">ABOUT US</span>
+      </a>
+      </div>
+    </section>
+    <script>
+    // Updated JavaScript for external navigation
+document.addEventListener('DOMContentLoaded', () => {
+  const navbar = document.getElementById("navbar");
+  const navToggle = document.getElementById("navToggle");
+  const navMenu = document.getElementById("navMenu");
+  const navLinks = document.querySelectorAll(".nav-link");
+
+  // Mobile menu toggle
+  if (navToggle) {
+    navToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+      navToggle.classList.toggle("active");
+    });
+  }
+
+  // Handle navigation clicks
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      // Close mobile menu when clicking a link
+      navMenu.classList.remove("active");
+      navToggle.classList.remove("active");
+      
+      // Remove active class from all links
+      navLinks.forEach((l) => l.classList.remove("active"));
+      
+      // Add active class to clicked link
+      link.classList.add("active");
+      
+      // For external links, let the browser handle the navigation naturally
+      // No need to prevent default or handle scrolling
+    });
+  });
+
+  // Navbar scroll effect
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      navbar.classList.add("scrolled");
+    } else {
+      navbar.classList.remove("scrolled");
+    }
+  });
+
+  // Set active link based on current page
+  function setActiveNavLink() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      const linkHref = link.getAttribute('href');
+      
+      // Check if current page matches the link
+      if (linkHref === currentPage || 
+          (currentPage === 'index.html' && linkHref === 'index.html') ||
+          linkHref.includes(currentPage)) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  // Set active link on page load
+  setActiveNavLink();
+});
+
+// Remove the old scrollToSection function and related scroll functionality
+// since we're now using external page navigation
+
+// Keep existing background effects and other functionality
+function createBackgroundShapes() {
+  const container = document.getElementById("bgShapes");
+  if (!container) return;
+  
+  const shapes = ["circle", "triangle", "square"];
+  setInterval(() => {
+    const shape = document.createElement("div");
+    shape.className = `shape shape-${shapes[Math.floor(Math.random() * shapes.length)]}`;
+    shape.style.left = Math.random() * 100 + "%";
+    shape.style.animationDuration = Math.random() * 10 + 15 + "s";
+    shape.style.animationDelay = Math.random() * 2 + "s";
+    container.appendChild(shape);
+    setTimeout(() => {
+      if (shape.parentNode) shape.parentNode.removeChild(shape);
+    }, 25000);
+  }, 3000);
+}
+
+function createParticles() {
+  const container = document.getElementById("particles");
+  if (!container) return;
+  
+  const particleCount = 80;
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = Math.random() * 100 + "%";
+    particle.style.top = Math.random() * 100 + "%";
+    particle.style.animationDelay = Math.random() * 6 + "s";
+    particle.style.animationDuration = Math.random() * 4 + 4 + "s";
+    container.appendChild(particle);
+  }
+  
+  setInterval(() => {
+    const particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = Math.random() * 100 + "%";
+    particle.style.top = Math.random() * 100 + "%";
+    particle.style.animationDuration = Math.random() * 4 + 4 + "s";
+    container.appendChild(particle);
+    setTimeout(() => {
+      if (particle.parentNode) particle.parentNode.removeChild(particle);
+    }, 8000);
+  }, 1000);
+}
+
+function createStars(containerId, starCount = 150) {
+  const starsContainer = document.getElementById(containerId);
+  if (!starsContainer) return;
+  
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    const size = Math.random() * 4 + 1;
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.animationDelay = Math.random() * 4 + "s";
+    star.style.animationDuration = Math.random() * 3 + 2 + "s";
+    starsContainer.appendChild(star);
+  }
+}
+function scrollToSection(sectionId) {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const offsetTop = element.offsetTop - 80;
+    window.scrollTo({ top: offsetTop, behavior: "smooth" });
+  }
+}
+
+// Initialize background effects
+document.addEventListener("DOMContentLoaded", () => {
+  createParticles();
+  createBackgroundShapes();
+  createStars("exploreStars", 100);
+  createStars("missionStars", 100);
+  createStars("aboutStars", 150);
+});
+</script>
+  
+<!-- 📌 Floating Chat Button -->
+<div id="chat-button">💬</div>
+
+<!-- 📌 Chat Widget -->
+<div id="chat-widget">
+  <div class="chat-header">
+    <span>Mindful Guide</span>
+    <button id="chat-close">✖</button>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="bot-message">🌿 Hello, friend. Let us find your inner peace today. How can I help you?</div>
+  </div>
+  <div class="chat-options">
+    <button onclick="sendOption('stressed')">Feeling stressed 😣</button>
+    <button onclick="sendOption('motivation')">Need motivation 💪</button>
+    <button onclick="sendOption('sleep')">Can’t sleep 😴</button>
+    <button onclick="sendOption('anxious')">Feeling anxious 🌊</button>
+  </div>
+</div>
+
+<style>
+/* Floating Chat Button */
+#chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  color: white;
+  font-size: 22px;
+  padding: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 180, 255, 0.4);
+  z-index: 9999;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#chat-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 180, 255, 0.6);
+}
+
+/* Chat Widget */
+#chat-widget {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  background: #f0faff;
+  border-radius: 12px;
+  box-shadow: 0 6px 30px rgba(0, 150, 200, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(150%);
+  transition: transform 0.4s ease;
+  z-index: 9999;
+}
+#chat-widget.open { transform: translateY(0); }
+
+/* Header */
+.chat-header {
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Messages */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+.bot-message, .user-message {
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  max-width: 80%;
+}
+.bot-message { background: #d8f4ff; }
+.user-message { background: #b3e6ff; align-self: flex-end; }
+
+/* Options */
+.chat-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #ccefff;
+  background: #f0faff;
+}
+.chat-options button {
+  flex: 1 1 48%;
+  background: linear-gradient(135deg, #80e8ff, #6ac7ff);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+.chat-options button:hover {
+  transform: scale(1.05);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const replyMap = {
+    stressed: [
+      "🌿 Take a slow breath… hold… release… Let tension leave your body.",
+      "🍃 You are stronger than the storm in your mind.",
+      "🕊️ Close your eyes — picture a safe, quiet place you love."
+    ],
+    motivation: [
+      "☀️ Every small step forward is a victory — keep going.",
+      "💪 You have overcome challenges before, you can do it again.",
+      "🌈 Believe in your effort — it will bloom in time."
+    ],
+    sleep: [
+      "😴 Try slow breathing: inhale 4, hold 4, exhale 6.",
+      "🌙 Let your thoughts drift like clouds — nothing to hold onto.",
+      "💤 Imagine gentle waves lapping at the shore — let it lull you."
+    ],
+    anxious: [
+      "🌊 Focus on something near you. Name 5 things you see.",
+      "🍂 Anxiety is like wind — it passes, and calm returns.",
+      "🫧 Take 3 slow breaths and feel your shoulders drop."
+    ]
+  };
+
+  const chatBtn = document.getElementById('chat-button');
+  const chatClose = document.getElementById('chat-close');
+
+  if (chatBtn) {
+    chatBtn.addEventListener('click', () => {
+      document.getElementById('chat-widget').classList.add('open');
+    });
+  }
+  if (chatClose) {
+    chatClose.addEventListener('click', () => {
+      document.getElementById('chat-widget').classList.remove('open');
+    });
+  }
+
+  window.sendOption = function(feeling) {
+    appendMessage(`You: ${formatFeeling(feeling)}`, 'user-message');
+    setTimeout(() => {
+      const replies = replyMap[feeling];
+      const reply = replies[Math.floor(Math.random() * replies.length)];
+      appendMessage(reply, 'bot-message');
+    }, 500);
+  };
+
+  function formatFeeling(feeling) {
+    const labels = {
+      stressed: "Feeling stressed 😣",
+      motivation: "Need motivation 💪",
+      sleep: "Can’t sleep 😴",
+      anxious: "Feeling anxious 🌊"
+    };
+    return labels[feeling] || feeling;
+  }
+
+  function appendMessage(msg, className) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add(className);
+    msgDiv.textContent = msg;
+    document.getElementById('chat-messages').appendChild(msgDiv);
+    document.getElementById('chat-messages').scrollTop =
+      document.getElementById('chat-messages').scrollHeight;
+  }
+});
+</script>
+</body>
+</html>                       

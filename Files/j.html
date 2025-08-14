@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Animated</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .about-section {
+        min-height: 100vh;
+        padding: 80px 0;
+        position: relative;
+      }
+
+      /* Floating particles background */
+      .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        animation: float 6s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-100px) rotate(180deg);
+          opacity: 0.5;
+        }
+      }
+
+      /* Hero section */
+      .hero {
+        text-align: center;
+        margin-bottom: 80px;
+        opacity: 0;
+        transform: translateY(50px);
+        animation: fadeInUp 1s ease-out 0.5s forwards;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        color: white;
+        margin-bottom: 20px;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Story section */
+      .story-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        margin-bottom: 100px;
+      }
+
+      .story-text {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease;
+      }
+
+      .story-text.animate {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .story-text h2 {
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      .story-text h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        transition: width 1s ease 0.5s;
+      }
+
+      .story-text.animate h2::after {
+        width: 100px;
+      }
+
+      .story-text p {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .story-visual {
+        position: relative;
+        opacity: 0;
+        transform: translateX(50px) scale(0.8);
+        transition: all 0.8s ease 0.3s;
+      }
+
+      .story-visual.animate {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+
+      .visual-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .visual-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .visual-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .visual-card:hover::before {
+        left: 100%;
+      }
+
+      /* Stats section */
+      .stats-section {
+        margin: 100px 0;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+      }
+      /* Navbar container */
+      .navbar {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1001; /* keeps navbar above other elements */
+      }
+
+      /* Menu icon (hamburger) */
+      .menu-icon {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        position: relative;
+        z-index: 1002; /* ensures it's always clickable */
+      }
+
+      .menu-icon span {
+        height: 3px;
+        width: 25px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      /* Navigation links */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        height: 100%;
+        width: 150px;
+        background: #444;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: right 0.3s ease;
+        z-index: 1000; /* ensures menu appears above content */
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      /* Animation for icon when active */
+      .menu-icon.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .menu-icon.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .menu-icon.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 40px 30px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.6s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card.animate {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #4ecdc4;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .stat-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* Team section */
+      .team-section {
+        margin: 100px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 60px;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .section-title.animate {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+      }
+
+      .team-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transform: translateY(50px) rotateX(10deg);
+        transition: all 0.8s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-card.animate {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+      }
+
+      .team-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .team-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-avatar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .team-card:hover .team-avatar::before {
+        opacity: 1;
+      }
+
+      .team-name {
+        font-size: 1.3rem;
+        color: white;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .team-role {
+        color: #4ecdc4;
+        font-size: 1rem;
+        margin-bottom: 15px;
+      }
+
+      .team-bio {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        font-size: 0.9rem;
+      }
+
+      /* Values section */
+      .values-section {
+        margin: 100px 0;
+      }
+
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+      }
+
+      .value-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 40px 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .value-card.animate {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .value-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-5px);
+      }
+
+      .value-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        color: white;
+      }
+
+      .value-title {
+        font-size: 1.3rem;
+        color: white;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .value-description {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .story-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        .container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <img src="../images/logo1.png" width="25"></img>
+      <div class="menu-icon" id="menuIcon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a href="../index.html">Home</a>
+      <a href="j.html">About Us</a>
+      <a href="charts.html">Charts</a>
+      <a href="game.html">Game</a>
+      <a href="index1.html">Timeline</a>
+    </div>
+    <div class="particles"></div>
+
+    <div class="about-section">
+      <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+          <h1>About Our Team</h1>
+          <p>
+            We're passionate student developers from classes 8K and 8L, working
+            together to create amazing web experiences for our school
+            competition. Innovation meets creativity in every project we build!
+          </p>
+        </div>
+
+        <!-- Story Section -->
+        <div class="story-grid">
+          <div class="story-text">
+            <h2>Our Journey</h2>
+            <p>
+              We're two dedicated students from class who discovered our passion
+              for web development and design. What started as a school project
+              has grown into an exciting collaboration for our school
+              competition.
+            </p>
+            <p>
+              We believe that creativity and technology can work together to
+              create something truly special. Every line of code and every
+              design element we create reflects our commitment to excellence and
+              innovation.
+            </p>
+            <p>
+              As young developers, we're excited to showcase our skills and
+              demonstrate what students can achieve when they work together with
+              dedication and passion.
+            </p>
+          </div>
+          <div class="story-visual">
+            <div class="visual-card">
+              <h3 style="color: white; margin-bottom: 20px; font-size: 1.5rem">
+                🏆 Student Excellence
+              </h3>
+              <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6">
+                We're not just learning to code; we're creating experiences that
+                showcase the potential of young minds in technology and design.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number" data-target="25">0</span>
+              <span class="stat-label">Projects Completed</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" data-target="2">0</span>
+              <span class="stat-label">Team Members</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" data-target="8">0</span>
+              <span class="stat-label">Months Learning</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" data-target="100">0</span>
+              <span class="stat-label">Dedication Level</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="team-section">
+          <h2 class="section-title">Meet Our Team</h2>
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar">👩‍💻</div>
+              <h3 class="team-name">Lavanya Gajbhiye</h3>
+              <p class="team-role">Web Developer - Class 8K</p>
+              <p class="team-bio">
+                Passionate about coding and creating interactive web
+                experiences. Loves solving problems through clean, efficient
+                code and innovative solutions.
+              </p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">👨‍🎨</div>
+              <h3 class="team-name">Hasan Rauf</h3>
+              <p class="team-role">Web Designer - Class 8L</p>
+              <p class="team-bio">
+                Creative mind behind beautiful designs and user interfaces.
+                Believes great design makes technology accessible and enjoyable
+                for everyone.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Values Section -->
+        <div class="values-section">
+          <h2 class="section-title">Our Values</h2>
+          <div class="values-grid">
+            <div class="value-card">
+              <div class="value-icon">🎯</div>
+              <h3 class="value-title">Learning</h3>
+              <p class="value-description">
+                We're constantly learning new technologies and improving our
+                skills. Every challenge is an opportunity to grow and excel.
+              </p>
+            </div>
+            <div class="value-card">
+              <div class="value-icon">🤝</div>
+              <h3 class="value-title">Teamwork</h3>
+              <p class="value-description">
+                Great projects happen when we combine our different skills. We
+                support each other and celebrate shared achievements.
+              </p>
+            </div>
+            <div class="value-card">
+              <div class="value-icon">⚡</div>
+              <h3 class="value-title">Creativity</h3>
+              <p class="value-description">
+                We love exploring new ideas and pushing the boundaries of what's
+                possible with web technology and design.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Create floating particles
+      function createParticles() {
+        const particlesContainer = document.querySelector(".particles");
+        for (let i = 0; i < 50; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+          particle.style.animationDelay = Math.random() * 6 + "s";
+          particle.style.animationDuration = Math.random() * 3 + 3 + "s";
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Intersection Observer for scroll animations
+      const observerOptions = {
+        threshold: 0.2,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate");
+
+            // Animate stats numbers
+            if (entry.target.classList.contains("stat-card")) {
+              const numberElement = entry.target.querySelector(".stat-number");
+              const target = parseInt(
+                numberElement.getAttribute("data-target")
+              );
+              animateNumber(numberElement, target);
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Animate numbers counting up
+      function animateNumber(element, target) {
+        let current = 0;
+        const increment = target / 100;
+        const duration = 2000;
+        const stepTime = duration / 100;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          element.textContent = Math.floor(current);
+        }, stepTime);
+      }
+
+      // Add staggered animation delays
+      function addStaggeredAnimations() {
+        const statCards = document.querySelectorAll(".stat-card");
+        const teamCards = document.querySelectorAll(".team-card");
+        const valueCards = document.querySelectorAll(".value-card");
+
+        statCards.forEach((card, index) => {
+          card.style.transitionDelay = index * 0.2 + "s";
+        });
+
+        teamCards.forEach((card, index) => {
+          card.style.transitionDelay = index * 0.3 + "s";
+        });
+
+        valueCards.forEach((card, index) => {
+          card.style.transitionDelay = index * 0.2 + "s";
+        });
+      }
+
+      // Parallax effect for mouse movement
+      function addParallaxEffect() {
+        document.addEventListener("mousemove", (e) => {
+          const cards = document.querySelectorAll(
+            ".visual-card, .stat-card, .team-card, .value-card"
+          );
+          const x = e.clientX / window.innerWidth;
+          const y = e.clientY / window.innerHeight;
+
+          cards.forEach((card) => {
+            const rect = card.getBoundingClientRect();
+            const cardX = (rect.left + rect.width / 2) / window.innerWidth;
+            const cardY = (rect.top + rect.height / 2) / window.innerHeight;
+
+            const deltaX = (x - cardX) * 10;
+            const deltaY = (y - cardY) * 10;
+
+            card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1)`;
+          });
+        });
+      }
+
+      // Initialize everything
+      document.addEventListener("DOMContentLoaded", () => {
+        createParticles();
+        addStaggeredAnimations();
+        addParallaxEffect();
+
+        // Observe all animatable elements
+        const elementsToAnimate = document.querySelectorAll(
+          ".story-text, .story-visual, .stat-card, .team-card, .value-card, .section-title"
+        );
+
+        elementsToAnimate.forEach((el) => observer.observe(el));
+
+        // Add smooth scrolling
+        document.documentElement.style.scrollBehavior = "smooth";
+      });
+
+      // Add some extra interactive effects
+      document.addEventListener("DOMContentLoaded", () => {
+        // Hover effects for team cards
+        const teamCards = document.querySelectorAll(".team-card");
+        teamCards.forEach((card) => {
+          card.addEventListener("mouseenter", () => {
+            card.style.transform =
+              "translateY(-15px) scale(1.05) rotateY(5deg)";
+          });
+
+          card.addEventListener("mouseleave", () => {
+            card.style.transform = "translateY(0) scale(1) rotateY(0deg)";
+          });
+        });
+
+        // Ripple effect for cards
+        const allCards = document.querySelectorAll(
+          ".stat-card, .team-card, .value-card, .visual-card"
+        );
+        allCards.forEach((card) => {
+          card.addEventListener("click", (e) => {
+            const ripple = document.createElement("div");
+            const rect = card.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+
+            card.style.position = "relative";
+            card.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+          });
+        });
+      });
+
+      // CSS for ripple animation
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+      document.head.appendChild(style);
+      const menuIcon = document.getElementById("menuIcon");
+      const navLinks = document.getElementById("navLinks");
+
+      menuIcon.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        menuIcon.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>

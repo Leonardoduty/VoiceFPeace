@@ -1,0 +1,3390 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Peace Timeline Explorer</title>
+    <style>
+      /* Floating flag & peace symbol styles */
+      .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 3; /* above shapes but below UI */
+        overflow: hidden;
+      }
+
+      .float-item {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.8;
+        animation: floatFlag linear infinite;
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+      }
+
+      @keyframes floatFlag {
+        0% {
+          transform: translateY(110vh) rotate(0deg) scale(1);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-20vh) rotate(360deg) scale(1.2);
+          opacity: 0;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Lunar themed dark gradient background */
+      body {
+        background: linear-gradient(
+          45deg,
+          #0f0f23 0%,
+          #1a1a2e 12.5%,
+          #16213e 25%,
+          #0f3460 37.5%,
+          #1e3a5f 50%,
+          #2d1b69 62.5%,
+          #1a1a2e 75%,
+          #0e1419 87.5%,
+          #0f0f23 100%
+        );
+        background-size: 800% 800%;
+        animation: gradientWave 20s ease infinite;
+        color: #c7d2fe;
+        overflow-x: hidden;
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      @keyframes gradientWave {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        14% {
+          background-position: 25% 25%;
+        }
+        28% {
+          background-position: 50% 75%;
+        }
+        42% {
+          background-position: 75% 25%;
+        }
+        56% {
+          background-position: 100% 50%;
+        }
+        70% {
+          background-position: 75% 75%;
+        }
+        84% {
+          background-position: 50% 25%;
+        }
+      }
+
+      /* Loading screen with lunar theme */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        transition: opacity 0.8s ease, visibility 0.8s ease;
+      }
+
+      .loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader {
+        width: 80px;
+        height: 80px;
+        border: 4px solid rgba(199, 210, 254, 0.2);
+        border-radius: 50%;
+        border-top-color: #c7d2fe;
+        border-right-color: #818cf8;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px;
+        box-shadow: 0 0 30px rgba(199, 210, 254, 0.3);
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: #c7d2fe;
+        font-size: 1.5rem;
+        font-weight: 300;
+        animation: pulse 2s ease-in-out infinite;
+        text-shadow: 0 0 20px rgba(199, 210, 254, 0.5);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .header {
+        text-align: center;
+        padding: 20px;
+        background: rgba(15, 15, 35, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(199, 210, 254, 0.2);
+        opacity: 0;
+        animation: slideInDown 1s ease 0.5s forwards;
+      }
+
+      @keyframes slideInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header h1 {
+        color: #c7d2fe;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+          0 0 30px rgba(199, 210, 254, 0.3);
+        animation: titleGlow 3s ease-in-out infinite;
+      }
+
+      @keyframes titleGlow {
+        0%,
+        100% {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+            0 0 30px rgba(199, 210, 254, 0.3);
+        }
+        50% {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+            0 0 50px rgba(129, 140, 248, 0.6), 0 0 80px rgba(199, 210, 254, 0.2);
+        }
+      }
+
+      .header p {
+        color: rgba(199, 210, 254, 0.8);
+        font-size: 1.1em;
+      }
+
+      .rope-container {
+        position: relative;
+        width: 100%;
+        min-height: 300px;
+        padding: 50px 20px;
+        opacity: 0;
+        animation: fadeInUp 1s ease 0.8s forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .rope {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(90deg, #4a5568, #6b7280, #4a5568);
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6),
+          0 0 20px rgba(75, 85, 104, 0.3);
+        animation: ropeFloat 4s ease-in-out infinite;
+      }
+
+      @keyframes ropeFloat {
+        0%,
+        100% {
+          transform: translateY(0px) rotateZ(0deg);
+        }
+        25% {
+          transform: translateY(-2px) rotateZ(0.5deg);
+        }
+        50% {
+          transform: translateY(0px) rotateZ(0deg);
+        }
+        75% {
+          transform: translateY(2px) rotateZ(-0.5deg);
+        }
+      }
+
+      .rope::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 10px,
+          rgba(75, 85, 104, 0.4) 10px,
+          rgba(75, 85, 104, 0.4) 12px
+        );
+        border-radius: 4px;
+      }
+
+      .rope::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        top: 50%;
+        left: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(199, 210, 254, 0.4),
+          transparent
+        );
+        animation: ropeShine 3s ease-in-out infinite;
+      }
+
+      @keyframes ropeShine {
+        0%,
+        100% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .country-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        gap: 20px;
+      }
+
+      .country-item {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: sway 3s ease-in-out infinite, fadeInScale 0.8s ease forwards;
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+      }
+
+      @keyframes fadeInScale {
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .country-item:hover {
+        transform: translateY(-15px) scale(1.1);
+        filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.3));
+      }
+
+      .country-item:active {
+        transform: translateY(-10px) scale(1.05);
+        transition: all 0.1s ease;
+      }
+
+      .rope-segment {
+        width: 3px;
+        height: 60px;
+        background: linear-gradient(180deg, #4a5568, #6b7280);
+        margin: 0 auto 10px;
+        border-radius: 1.5px;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6),
+          0 0 10px rgba(75, 85, 104, 0.2);
+        transition: all 0.3s ease;
+        animation: segmentSway 2.5s ease-in-out infinite;
+      }
+
+      @keyframes segmentSway {
+        0%,
+        100% {
+          transform: rotateZ(-1deg);
+        }
+        50% {
+          transform: rotateZ(1deg);
+        }
+      }
+
+      .country-item:hover .rope-segment {
+        height: 70px;
+        background: linear-gradient(180deg, #5a6578, #7b8394);
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8),
+          0 0 15px rgba(199, 210, 254, 0.3);
+      }
+
+      .flag {
+        width: 80px;
+        height: 50px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6),
+          0 0 20px rgba(199, 210, 254, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid #c7d2fe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5em;
+        background: rgba(15, 15, 35, 0.8);
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .flag::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(199, 210, 254, 0.2),
+          transparent
+        );
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        transition: transform 0.6s ease;
+      }
+
+      .country-item:hover .flag::before {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+
+      .country-item:hover .flag {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8),
+          0 0 30px rgba(129, 140, 248, 0.4);
+        transform: scale(1.1) rotateY(5deg);
+        border-color: #818cf8;
+      }
+
+      .flag img {
+        transition: all 0.3s ease;
+        border-radius: 4px;
+      }
+
+      .country-item:hover .flag img {
+        transform: scale(1.05);
+        filter: brightness(1.1) saturate(1.2);
+      }
+
+      .country-name {
+        text-align: center;
+        margin-top: 8px;
+        font-weight: bold;
+        color: #c7d2fe;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        font-size: 12px;
+        transition: all 0.3s ease;
+        opacity: 0.8;
+      }
+
+      .country-item:hover .country-name {
+        opacity: 1;
+        transform: translateY(-2px);
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9),
+          0 0 15px rgba(129, 140, 248, 0.5);
+      }
+
+      .timeline-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(5px);
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .timeline-content {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 1000px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+          0 0 50px rgba(199, 210, 254, 0.1);
+        border: 1px solid rgba(199, 210, 254, 0.2);
+        position: relative;
+        animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .close {
+        color: #c7d2fe;
+        float: right;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        line-height: 1;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .close:hover {
+        color: #fef2f2;
+        background: rgba(239, 68, 68, 0.2);
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      }
+
+      .timeline-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #818cf8;
+        animation: headerSlideIn 0.6s ease 0.2s both;
+      }
+
+      @keyframes headerSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .timeline-header h2 {
+        font-size: 2.2em;
+        color: #c7d2fe;
+        margin-bottom: 10px;
+        animation: titlePulse 2s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(129, 140, 248, 0.3);
+      }
+
+      @keyframes titlePulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .timeline-header p {
+        color: rgba(199, 210, 254, 0.7);
+        font-size: 1.1em;
+      }
+
+      .timeline {
+        position: relative;
+        padding-left: 50px;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 25px;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #818cf8, #6366f1);
+        border-radius: 2px;
+        animation: timelinePulse 3s ease-in-out infinite;
+        box-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+      }
+
+      @keyframes timelinePulse {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(129, 140, 248, 0.6);
+        }
+      }
+
+      .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #1e293b, #334155);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4),
+          0 0 20px rgba(199, 210, 254, 0.05);
+        border: 1px solid rgba(199, 210, 254, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateX(-30px);
+        animation: timelineItemSlide 0.6s ease forwards;
+      }
+
+      @keyframes timelineItemSlide {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .timeline-item:hover {
+        transform: translateX(15px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6),
+          0 0 30px rgba(129, 140, 248, 0.2);
+        border-color: rgba(199, 210, 254, 0.3);
+      }
+
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -37px;
+        top: 25px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        animation: dotPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes dotPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      .timeline-item:hover::before {
+        transform: scale(1.3);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .war-period::before {
+        background: #ff4757;
+        animation: warPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes warPulse {
+        0%,
+        100% {
+          background: #ff4757;
+          transform: scale(1);
+        }
+        50% {
+          background: #ff3838;
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(255, 71, 87, 0.6);
+        }
+      }
+
+      .peace-period::before {
+        background: #2ed573;
+        animation: peacePulse 2s ease-in-out infinite;
+      }
+
+      @keyframes peacePulse {
+        0%,
+        100% {
+          background: #2ed573;
+          transform: scale(1);
+        }
+        50% {
+          background: #26d061;
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(46, 213, 115, 0.6);
+        }
+      }
+
+      .civil-conflict::before {
+        background: #ff9f43;
+        animation: civilPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes civilPulse {
+        0%,
+        100% {
+          background: #ff9f43;
+          transform: scale(1);
+        }
+        50% {
+          background: #ff8c26;
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(255, 159, 67, 0.6);
+        }
+      }
+
+      .colonial-period::before {
+        background: #a55eea;
+        animation: colonialPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes colonialPulse {
+        0%,
+        100% {
+          background: #a55eea;
+          transform: scale(1);
+        }
+        50% {
+          background: #9c44dc;
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(165, 94, 234, 0.6);
+        }
+      }
+
+      .timeline-date {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #818cf8;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .timeline-item:hover .timeline-date {
+        color: #c7d2fe;
+        transform: translateX(5px);
+      }
+
+      .timeline-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #c7d2fe;
+        transition: all 0.3s ease;
+      }
+
+      .timeline-item:hover .timeline-title {
+        color: #e0e7ff;
+        transform: translateX(5px);
+      }
+
+      .timeline-description {
+        color: rgba(199, 210, 254, 0.8);
+        line-height: 1.6;
+        transition: all 0.3s ease;
+      }
+
+      .timeline-item:hover .timeline-description {
+        color: rgba(199, 210, 254, 0.9);
+        transform: translateX(5px);
+      }
+
+      .legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        animation: legendSlide 0.8s ease 0.4s both;
+      }
+
+      @keyframes legendSlide {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: rgba(199, 210, 254, 0.8);
+        transition: all 0.3s ease;
+        padding: 8px 12px;
+        border-radius: 20px;
+        background: rgba(15, 15, 35, 0.6);
+        border: 1px solid rgba(199, 210, 254, 0.1);
+      }
+
+      .legend-item:hover {
+        background: rgba(15, 15, 35, 0.8);
+        border-color: rgba(199, 210, 254, 0.3);
+        color: #c7d2fe;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #1e293b;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .legend-item:hover .legend-color {
+        transform: scale(1.3);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      }
+
+      @keyframes sway {
+        0%,
+        100% {
+          transform: rotate(-1deg);
+        }
+        50% {
+          transform: rotate(1deg);
+        }
+      }
+
+      .country-item:nth-child(2n) {
+        animation-delay: -1s;
+      }
+
+      .country-item:nth-child(3n) {
+        animation-delay: -2s;
+      }
+
+      .country-item:nth-child(4n) {
+        animation-delay: -0.5s;
+      }
+
+      /* Scrollbar styling for lunar theme */
+      .timeline-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .timeline-content::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.3);
+        border-radius: 10px;
+      }
+
+      .timeline-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #818cf8, #6366f1);
+        border-radius: 10px;
+        transition: background 0.3s ease;
+      }
+
+      .timeline-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #c7d2fe, #818cf8);
+      }
+
+      /* Floating geometric shapes */
+      .floating-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 2;
+        overflow: hidden;
+      }
+
+      .shape {
+        position: absolute;
+        opacity: 0.1;
+        animation: floatShape 20s ease-in-out infinite;
+      }
+
+      .shape.triangle {
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 25px solid #818cf8;
+        animation: floatShape 25s ease-in-out infinite,
+          rotate 15s linear infinite;
+      }
+
+      .shape.circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #c7d2fe;
+        animation: floatShape 30s ease-in-out infinite,
+          pulse 4s ease-in-out infinite;
+      }
+
+      .shape.diamond {
+        width: 20px;
+        height: 20px;
+        background: #6366f1;
+        transform: rotate(45deg);
+        animation: floatShape 22s ease-in-out infinite,
+          rotate 12s linear infinite;
+      }
+
+      .shape.hexagon {
+        width: 20px;
+        height: 11.5px;
+        background: #818cf8;
+        position: relative;
+        animation: floatShape 28s ease-in-out infinite,
+          rotate 18s linear infinite;
+      }
+
+      .shape.hexagon:before,
+      .shape.hexagon:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+      }
+
+      .shape.hexagon:before {
+        bottom: 100%;
+        border-bottom: 5.75px solid #818cf8;
+      }
+
+      .shape.hexagon:after {
+        top: 100%;
+        border-top: 5.75px solid #818cf8;
+      }
+
+      @keyframes floatShape {
+        0% {
+          transform: translateY(100vh) translateX(0px) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.15;
+        }
+        90% {
+          opacity: 0.15;
+        }
+        100% {
+          transform: translateY(-100px) translateX(100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Enhanced particle effects */
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .particle.star {
+        width: 3px;
+        height: 3px;
+        background: #c7d2fe;
+        box-shadow: 0 0 6px #c7d2fe;
+      }
+
+      .particle.dot {
+        width: 2px;
+        height: 2px;
+        background: #818cf8;
+        box-shadow: 0 0 4px #818cf8;
+      }
+
+      /* Enhanced mobile responsiveness */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .country-container {
+          gap: 15px;
+        }
+
+        .country-item {
+          margin-bottom: 20px;
+        }
+
+        .flag {
+          width: 70px;
+          height: 45px;
+        }
+
+        .timeline-content {
+          margin: 2% auto;
+          padding: 20px;
+          width: 95%;
+        }
+
+        .timeline {
+          padding-left: 40px;
+        }
+
+        .legend {
+          gap: 15px;
+        }
+      }
+
+      /* Particle effect overlay */
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .particle.star {
+        width: 3px;
+        height: 3px;
+        background: #c7d2fe;
+        box-shadow: 0 0 6px #c7d2fe;
+      }
+
+      .particle.dot {
+        width: 2px;
+        height: 2px;
+        background: #818cf8;
+        box-shadow: 0 0 4px #818cf8;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) translateX(0px) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.8;
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(50px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+      .discover-container {
+        position: relative;
+        z-index: 999; /* sits above background effects */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 12px; /* small gap only */
+        margin-bottom: 0;
+        pointer-events: none; /* container doesn't block clicks; button will */
+        overflow: visible;
+      }
+      .btn.discover-btn {
+        pointer-events: auto; /* clickable */
+        position: relative;
+        z-index: 1000;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 44px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #ffffff;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        /* eye-catching gradient + shimmer + pulse */
+        background: linear-gradient(90deg, #00e5ff, #0077ff, #00e5ff);
+        background-size: 200% 200%;
+        animation: shimmer 6s linear infinite, pulse 2.6s ease-in-out infinite;
+
+        box-shadow: 0 10px 30px rgba(0, 123, 255, 0.25),
+          inset 0 -4px 14px rgba(0, 0, 0, 0.12);
+        transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.2, 1),
+          box-shadow 0.28s;
+      }
+      .btn.discover-btn:hover {
+        transform: scale(1.09) translateY(-4px);
+        box-shadow: 0 18px 50px rgba(0, 123, 255, 0.45),
+          0 6px 20px rgba(0, 123, 255, 0.22);
+      }
+
+      /* focus for accessibility */
+      .btn.discover-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.14);
+      }
+
+      /* mobile */
+      @media (max-width: 768px) {
+        .btn.discover-btn {
+          width: 280px;
+          justify-content: center;
+        }
+      }
+
+      /* ===== Floating Flags & Peace Symbols ===== */
+      .floating-emoji-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5; /* above geometric shapes */
+        overflow: hidden;
+      }
+
+      .float-emoji {
+        position: absolute;
+        will-change: transform, opacity;
+        opacity: 0;
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+        filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.25));
+        animation-name: emojiRise;
+        animation-timing-function: linear;
+        animation-iteration-count: 1;
+      }
+
+      .float-emoji.flag {
+        font-size: clamp(1.2rem, 2.2vw, 2.1rem);
+      }
+      .float-emoji.symbol {
+        font-size: clamp(1.2rem, 2vw, 1.9rem);
+      }
+
+      @keyframes emojiRise {
+        0% {
+          transform: translateY(110vh) translateX(0) rotate(var(--r0, 0deg))
+            scale(var(--s, 1));
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.9;
+        }
+        90% {
+          opacity: 0.9;
+        }
+        100% {
+          transform: translateY(-20vh) translateX(var(--xDrift, 0))
+            rotate(var(--r1, 360deg)) scale(var(--sEnd, 1.15));
+          opacity: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .floating-emoji-layer {
+          display: none !important;
+        }
+      }
+      .loader {
+  position: relative; /* ensures the logo can be positioned inside */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-logo {
+  position: absolute;
+  width: 25%; /* adjust size to fit inside circle */
+  max-width: 70px;
+  height: auto;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="loading-screen">
+      <div class="loader"></div>
+      <div class="loading-text">Loading Peace Timeline Explorer...</div>
+      <div class="loading-image"><img src="../images/logo1.png" width="200"></img></div>
+    </div>
+    <div class="particles"></div>
+    <div class="floating-shapes"></div>
+    <div aria-hidden="true" class="floating-emoji-layer"></div>
+    <div class="floating-shapes"></div>
+    <div class="particles" id="particles"></div>
+    <div class="header">
+      <h1>Peace Timeline Explorer</h1>
+      <p>
+        Click on any country flag to explore their peace and conflict history
+        from 1850
+      </p>
+    </div>
+    <div class="rope-container">
+      <div class="rope"></div>
+      <div class="country-container">
+        <div class="country-item" data-country="USA">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="United States Flag" src="../images/USA.png" width="130" />
+          </div>
+          <div class="country-name">United States</div>
+        </div>
+        <div class="country-item" data-country="UK">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="United Kingdom Flag" src="../images/gb.png" width="130" />
+          </div>
+          <div class="country-name">United Kingdom</div>
+        </div>
+        <div class="country-item" data-country="France">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="France Flag" src="../images/France.webp" width="105" />
+          </div>
+          <div class="country-name">France</div>
+        </div>
+        <div class="country-item" data-country="Germany">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="Germany Flag" src="../images/germany.webp" width="110" />
+          </div>
+          <div class="country-name">Germany</div>
+        </div>
+        <div class="country-item" data-country="Russia">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="Russia Flag" src="../images/ru-flag.jpg" width="105" />
+          </div>
+          <div class="country-name">Russia</div>
+        </div>
+        <div class="country-item" data-country="China">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="China Flag" src="../images/China.png" width="105" />
+          </div>
+          <div class="country-name">China</div>
+        </div>
+        <div class="country-item" data-country="Japan">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img
+              alt="Japan Flag"
+              src="../images/Flag_of_Japan.webp"
+              width="105"
+            />
+          </div>
+          <div class="country-name">Japan</div>
+        </div>
+        <div class="country-item" data-country="India">
+          <div class="rope-segment"></div>
+          <div class="flag">
+            <img alt="India Flag" src="../images/India.png" width="105" />
+          </div>
+          <div class="country-name">India</div>
+        </div>
+      </div>
+    </div>
+    <div class="discover-container">
+      <a
+        aria-label="Discover more — go to next page"
+        class="btn discover-btn"
+        href="GlobalTimeline.html"
+        role="button"
+      >
+        <span class="discover-ico">🔎</span>
+        <span class="discover-text">GlobaL Peace Timeline</span>
+      </a>
+    </div>
+    <!-- Second Row -->
+    <div class="country-container" style="margin-top: 80px">
+      <div class="rope" style="top: -40px"></div>
+      <div class="country-item" data-country="Pakistan">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Pakistan Flag" src="../images/Pakistan.png" width="105" />
+        </div>
+        <div class="country-name">Pakistan</div>
+      </div>
+      <div class="country-item" data-country="South Africa">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img
+            alt="South Africa Flag"
+            src="../images/South-Africa.webp"
+            width="105"
+          />
+        </div>
+        <div class="country-name">South Africa</div>
+      </div>
+      <div class="country-item" data-country="Canada">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Canada Flag" src="../images/canada.jpg" width="105" />
+        </div>
+        <div class="country-name">Canada</div>
+      </div>
+      <div class="country-item" data-country="Mexico">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Mexico Flag" src="../images/mexico.gif" width="105" />
+        </div>
+        <div class="country-name">Mexico</div>
+      </div>
+      <div class="country-item" data-country="Jamaica">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Jamaica Flag" src="../images/jamaica.jpg" width="105" />
+        </div>
+        <div class="country-name">Jamaica</div>
+      </div>
+      <div class="country-item" data-country="CostaRica">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img
+            alt="Costa Rica Flag"
+            src="../images/-Costa-Rica.webp"
+            width="105"
+          />
+        </div>
+        <div class="country-name">Costa Rica</div>
+      </div>
+      <div class="country-item" data-country="Chile">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Chile Flag" src="../images/chile.jpg" width="105" />
+        </div>
+        <div class="country-name">Chile</div>
+      </div>
+      <div class="country-item" data-country="Vietnam">
+        <div class="rope-segment"></div>
+        <div class="flag">
+          <img alt="Vietnam Flag" src="../images/veitnam.png" width="105" />
+        </div>
+        <div class="country-name">Vietnam</div>
+      </div>
+    </div>
+
+    <div class="timeline-modal" id="timelineModal">
+      <div class="timeline-content">
+        <span class="close">×</span>
+        <div class="timeline-header">
+          <h2 id="countryTitle"></h2>
+          <p>Peace and Conflict Timeline (1850-2025)</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background: #2ed573"></div>
+            <span>Peace Period</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ff4757"></div>
+            <span>Major War/Conflict</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ff9f43"></div>
+            <span>Civil/Internal Conflict</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #a55eea"></div>
+            <span>Colonial Period</span>
+          </div>
+        </div>
+        <div class="timeline" id="timelineEvents"></div>
+      </div>
+    </div>
+    <script>
+      const timelineData = {
+        USA: [
+          {
+            year: "1850-1861",
+            title: "Pre-Civil War Expansion",
+            description:
+              "Period of westward expansion and growing tensions over slavery",
+            type: "peace-period",
+          },
+          {
+            year: "1861-1865",
+            title: "American Civil War",
+            description:
+              "Devastating civil war between Union and Confederate states over slavery and states' rights",
+            type: "civil-conflict",
+          },
+          {
+            year: "1865-1898",
+            title: "Reconstruction & Gilded Age",
+            description: "Post-war reconstruction and rapid industrialization",
+            type: "peace-period",
+          },
+          {
+            year: "1898",
+            title: "Spanish-American War",
+            description:
+              "Brief war with Spain resulting in US territorial expansion",
+            type: "war-period",
+          },
+          {
+            year: "1898-1917",
+            title: "Progressive Era",
+            description:
+              "Period of domestic reform and limited international involvement",
+            type: "peace-period",
+          },
+          {
+            year: "1917-1918",
+            title: "World War I",
+            description: "US entry into the Great War in 1917",
+            type: "war-period",
+          },
+          {
+            year: "1918-1941",
+            title: "Interwar Period",
+            description: "Isolationist policies and focus on domestic issues",
+            type: "peace-period",
+          },
+          {
+            year: "1941-1945",
+            title: "World War II",
+            description:
+              "Full US involvement in global conflict after Pearl Harbor",
+            type: "war-period",
+          },
+          {
+            year: "1945-1950",
+            title: "Post-War Adjustment",
+            description:
+              "Transition to peacetime economy and Cold War beginnings",
+            type: "peace-period",
+          },
+          {
+            year: "1950-1953",
+            title: "Korean War",
+            description: "US-led UN forces in Korean peninsula conflict",
+            type: "war-period",
+          },
+          {
+            year: "1953-1965",
+            title: "Cold War Tensions",
+            description: "Nuclear arms race and proxy conflicts",
+            type: "peace-period",
+          },
+          {
+            year: "1964-1975",
+            title: "Vietnam War",
+            description: "Prolonged involvement in Southeast Asian conflict",
+            type: "war-period",
+          },
+          {
+            year: "1975-1991",
+            title: "Late Cold War",
+            description:
+              "Continued superpower tensions with periodic conflicts",
+            type: "peace-period",
+          },
+          {
+            year: "1991",
+            title: "Gulf War",
+            description: "Brief military operation to liberate Kuwait",
+            type: "war-period",
+          },
+          {
+            year: "1991-2001",
+            title: "Post-Cold War Era",
+            description: "Period of relative global stability and US hegemony",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2021",
+            title: "War on Terror",
+            description:
+              "Military operations in Afghanistan, Iraq, and global counterterrorism",
+            type: "war-period",
+          },
+          {
+            year: "2021-2025",
+            title: "Great Power Competition",
+            description: "Strategic competition with China and Russia",
+            type: "peace-period",
+          },
+        ],
+        UK: [
+          {
+            year: "1850-1856",
+            title: "Crimean War",
+            description:
+              "British involvement in conflict against Russia in Crimea",
+            type: "war-period",
+          },
+          {
+            year: "1856-1878",
+            title: "Imperial Expansion",
+            description:
+              "Period of colonial expansion and the Great Game with Russia",
+            type: "colonial-period",
+          },
+          {
+            year: "1878-1899",
+            title: "Late Victorian Peace",
+            description:
+              "Relative peace at home with colonial conflicts abroad",
+            type: "peace-period",
+          },
+          {
+            year: "1899-1902",
+            title: "Second Boer War",
+            description: "Colonial war in South Africa",
+            type: "colonial-period",
+          },
+          {
+            year: "1902-1914",
+            title: "Edwardian Era",
+            description: "Period of prosperity and growing European tensions",
+            type: "peace-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I",
+            description: "Britain's involvement in the Great War",
+            type: "war-period",
+          },
+          {
+            year: "1918-1939",
+            title: "Interwar Period",
+            description: "Economic challenges and rise of fascism",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description: "Britain's fight against Nazi Germany and Axis powers",
+            type: "war-period",
+          },
+          {
+            year: "1945-1956",
+            title: "Post-War Recovery",
+            description: "Decolonization and welfare state establishment",
+            type: "peace-period",
+          },
+          {
+            year: "1956",
+            title: "Suez Crisis",
+            description: "Failed military intervention in Egypt",
+            type: "war-period",
+          },
+          {
+            year: "1956-1982",
+            title: "Decolonization Era",
+            description: "Gradual end of empire with some conflicts",
+            type: "peace-period",
+          },
+          {
+            year: "1982",
+            title: "Falklands War",
+            description: "Brief conflict with Argentina over Falkland Islands",
+            type: "war-period",
+          },
+          {
+            year: "1982-1990",
+            title: "Late Cold War",
+            description: "Strong alliance with US in final Cold War phase",
+            type: "peace-period",
+          },
+          {
+            year: "1990-2003",
+            title: "Post-Cold War",
+            description: "Interventions in Balkans and Middle East",
+            type: "peace-period",
+          },
+          {
+            year: "2003-2014",
+            title: "Iraq & Afghanistan",
+            description: "Military involvement in Iraq and Afghanistan wars",
+            type: "war-period",
+          },
+          {
+            year: "2014-2025",
+            title: "Modern Era",
+            description: "Brexit and renewed global tensions",
+            type: "peace-period",
+          },
+        ],
+        France: [
+          {
+            year: "1850-1854",
+            title: "Second Empire Begins",
+            description: "Napoleon III's rule and industrial modernization",
+            type: "peace-period",
+          },
+          {
+            year: "1854-1856",
+            title: "Crimean War",
+            description: "French involvement alongside Britain against Russia",
+            type: "war-period",
+          },
+          {
+            year: "1856-1870",
+            title: "Imperial Expansion",
+            description: "Colonial expansion in Africa and Indochina",
+            type: "colonial-period",
+          },
+          {
+            year: "1870-1871",
+            title: "Franco-Prussian War",
+            description:
+              "Devastating defeat by Prussia and loss of Alsace-Lorraine",
+            type: "war-period",
+          },
+          {
+            year: "1871-1914",
+            title: "Third Republic",
+            description: "Recovery, colonial expansion, and alliance building",
+            type: "peace-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I",
+            description: "Massive casualties on Western Front",
+            type: "war-period",
+          },
+          {
+            year: "1918-1939",
+            title: "Interwar Period",
+            description: "Recovery, but growing German threat",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description: "Occupation, resistance, and liberation",
+            type: "war-period",
+          },
+          {
+            year: "1945-1954",
+            title: "Fourth Republic",
+            description: "Reconstruction and beginning of decolonization",
+            type: "peace-period",
+          },
+          {
+            year: "1946-1954",
+            title: "First Indochina War",
+            description: "Colonial war in Vietnam ending at Dien Bien Phu",
+            type: "colonial-period",
+          },
+          {
+            year: "1954-1962",
+            title: "Algerian War",
+            description: "Brutal war of independence in Algeria",
+            type: "colonial-period",
+          },
+          {
+            year: "1958-1990",
+            title: "Fifth Republic",
+            description: "De Gaulle's France and Cold War neutrality",
+            type: "peace-period",
+          },
+          {
+            year: "1990-2001",
+            title: "Post-Cold War",
+            description: "European integration and limited interventions",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2014",
+            title: "War on Terror",
+            description: "Military operations in Afghanistan and Africa",
+            type: "war-period",
+          },
+          {
+            year: "2014-2025",
+            title: "Modern Challenges",
+            description: "Counter-terrorism and EU leadership",
+            type: "peace-period",
+          },
+        ],
+        Germany: [
+          {
+            year: "1850-1864",
+            title: "German Confederation",
+            description: "Fragmented German states before unification",
+            type: "peace-period",
+          },
+          {
+            year: "1864-1871",
+            title: "Wars of Unification",
+            description: "Prussian wars leading to German Empire formation",
+            type: "war-period",
+          },
+          {
+            year: "1871-1914",
+            title: "German Empire",
+            description: "Industrial growth and colonial expansion",
+            type: "peace-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I",
+            description: "Central Powers leadership and ultimate defeat",
+            type: "war-period",
+          },
+          {
+            year: "1918-1933",
+            title: "Weimar Republic",
+            description: "Democratic period with economic instability",
+            type: "peace-period",
+          },
+          {
+            year: "1933-1939",
+            title: "Nazi Rise",
+            description: "Hitler's regime and military buildup",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description: "Aggressive expansion and total defeat",
+            type: "war-period",
+          },
+          {
+            year: "1945-1949",
+            title: "Allied Occupation",
+            description: "Division and reconstruction under Allied powers",
+            type: "peace-period",
+          },
+          {
+            year: "1949-1990",
+            title: "Divided Germany",
+            description: "East-West division during Cold War",
+            type: "peace-period",
+          },
+          {
+            year: "1990-2001",
+            title: "Reunification Era",
+            description: "German reunification and European integration",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2014",
+            title: "Limited Military Role",
+            description:
+              "Gradual increase in international military involvement",
+            type: "peace-period",
+          },
+          {
+            year: "2014-2025",
+            title: "European Leadership",
+            description: "Leading role in EU during various crises",
+            type: "peace-period",
+          },
+        ],
+        Russia: [
+          {
+            year: "1850-1856",
+            title: "Crimean War",
+            description:
+              "Devastating defeat by Ottoman-British-French alliance",
+            type: "war-period",
+          },
+          {
+            year: "1856-1877",
+            title: "Great Reforms",
+            description: "Alexander II's modernization efforts",
+            type: "peace-period",
+          },
+          {
+            year: "1877-1878",
+            title: "Russo-Turkish War",
+            description: "Successful war leading to Bulgarian independence",
+            type: "war-period",
+          },
+          {
+            year: "1878-1904",
+            title: "Imperial Expansion",
+            description: "Expansion in Central Asia and Far East",
+            type: "colonial-period",
+          },
+          {
+            year: "1904-1905",
+            title: "Russo-Japanese War",
+            description: "Humiliating defeat by Japan",
+            type: "war-period",
+          },
+          {
+            year: "1905-1914",
+            title: "Revolutionary Period",
+            description: "1905 Revolution and constitutional monarchy",
+            type: "civil-conflict",
+          },
+          {
+            year: "1914-1917",
+            title: "World War I",
+            description: "Catastrophic involvement leading to revolution",
+            type: "war-period",
+          },
+          {
+            year: "1917-1921",
+            title: "Revolution & Civil War",
+            description: "Bolshevik Revolution and Russian Civil War",
+            type: "civil-conflict",
+          },
+          {
+            year: "1921-1941",
+            title: "Soviet Consolidation",
+            description: "Stalin's rise and Soviet industrialization",
+            type: "peace-period",
+          },
+          {
+            year: "1941-1945",
+            title: "Great Patriotic War",
+            description: "Soviet involvement in World War II",
+            type: "war-period",
+          },
+          {
+            year: "1945-1989",
+            title: "Cold War Superpower",
+            description: "Nuclear standoff with the West",
+            type: "peace-period",
+          },
+          {
+            year: "1979-1989",
+            title: "Soviet-Afghan War",
+            description: "Devastating war in Afghanistan",
+            type: "war-period",
+          },
+          {
+            year: "1991-1999",
+            title: "Post-Soviet Transition",
+            description: "Economic collapse and political instability",
+            type: "civil-conflict",
+          },
+          {
+            year: "1994-1996, 1999-2009",
+            title: "Chechen Wars",
+            description: "Two brutal wars in Chechnya",
+            type: "civil-conflict",
+          },
+          {
+            year: "2008",
+            title: "Georgia War",
+            description: "Brief war with Georgia",
+            type: "war-period",
+          },
+          {
+            year: "2014-2025",
+            title: "New Cold War",
+            description: "Ukraine crisis and renewed tensions with West",
+            type: "war-period",
+          },
+        ],
+        China: [
+          {
+            year: "1850-1864",
+            title: "Taiping Rebellion",
+            description: "Massive civil war killing over 20 million people",
+            type: "civil-conflict",
+          },
+          {
+            year: "1856-1860",
+            title: "Second Opium War",
+            description: "Continued foreign intervention and unequal treaties",
+            type: "colonial-period",
+          },
+          {
+            year: "1860-1895",
+            title: "Self-Strengthening",
+            description:
+              "Attempts at modernization while maintaining Qing rule",
+            type: "peace-period",
+          },
+          {
+            year: "1894-1895",
+            title: "First Sino-Japanese War",
+            description: "Humiliating defeat by modernizing Japan",
+            type: "war-period",
+          },
+          {
+            year: "1899-1901",
+            title: "Boxer Rebellion",
+            description:
+              "Anti-foreign uprising crushed by international forces",
+            type: "civil-conflict",
+          },
+          {
+            year: "1911-1949",
+            title: "Republic Era",
+            description: "Warlord period, Japanese invasion, and civil war",
+            type: "civil-conflict",
+          },
+          {
+            year: "1937-1945",
+            title: "Second Sino-Japanese War",
+            description: "Brutal Japanese occupation during WWII",
+            type: "war-period",
+          },
+          {
+            year: "1945-1949",
+            title: "Chinese Civil War",
+            description: "Communist victory over Nationalists",
+            type: "civil-conflict",
+          },
+          {
+            year: "1949-1976",
+            title: "Mao Era",
+            description:
+              "People's Republic establishment with internal upheavals",
+            type: "peace-period",
+          },
+          {
+            year: "1950-1953",
+            title: "Korean War",
+            description: "Chinese intervention in Korean conflict",
+            type: "war-period",
+          },
+          {
+            year: "1962",
+            title: "Sino-Indian War",
+            description: "Brief border war with India",
+            type: "war-period",
+          },
+          {
+            year: "1969",
+            title: "Sino-Soviet Border Conflict",
+            description: "Armed clashes with Soviet Union",
+            type: "war-period",
+          },
+          {
+            year: "1979",
+            title: "Sino-Vietnamese War",
+            description: "Brief punitive war against Vietnam",
+            type: "war-period",
+          },
+          {
+            year: "1978-2010",
+            title: "Reform & Opening",
+            description: "Economic transformation and peaceful development",
+            type: "peace-period",
+          },
+          {
+            year: "2010-2025",
+            title: "Rising Power",
+            description: "Great power competition and territorial disputes",
+            type: "peace-period",
+          },
+        ],
+        Japan: [
+          {
+            year: "1850-1868",
+            title: "End of Isolation",
+            description: "Perry's arrival and forced opening of Japan",
+            type: "peace-period",
+          },
+          {
+            year: "1868-1894",
+            title: "Meiji Restoration",
+            description: "Rapid modernization and westernization",
+            type: "peace-period",
+          },
+          {
+            year: "1894-1895",
+            title: "First Sino-Japanese War",
+            description:
+              "Victory over China establishes Japan as regional power",
+            type: "war-period",
+          },
+          {
+            year: "1904-1905",
+            title: "Russo-Japanese War",
+            description: "Stunning victory over Russian Empire",
+            type: "war-period",
+          },
+          {
+            year: "1905-1931",
+            title: "Imperial Expansion",
+            description: "Growing empire in Korea and Manchuria",
+            type: "colonial-period",
+          },
+          {
+            year: "1931-1945",
+            title: "Aggressive Expansion",
+            description: "Manchurian Incident through WWII defeat",
+            type: "war-period",
+          },
+          {
+            year: "1937-1945",
+            title: "Second Sino-Japanese War",
+            description: "Full-scale war with China",
+            type: "war-period",
+          },
+          {
+            year: "1941-1945",
+            title: "Pacific War",
+            description: "War with US and Allies ending in atomic bombs",
+            type: "war-period",
+          },
+          {
+            year: "1945-1951",
+            title: "US Occupation",
+            description: "Occupation and democratic reconstruction",
+            type: "peace-period",
+          },
+          {
+            year: "1951-1991",
+            title: "Economic Miracle",
+            description: "Rapid economic growth and pacifist constitution",
+            type: "peace-period",
+          },
+          {
+            year: "1991-2010",
+            title: "Lost Decades",
+            description: "Economic stagnation but continued peace",
+            type: "peace-period",
+          },
+          {
+            year: "2010-2025",
+            title: "Security Challenges",
+            description: "Rising China and North Korean threats",
+            type: "peace-period",
+          },
+        ],
+        India: [
+          {
+            year: "1850-1857",
+            title: "British Colonial Rule",
+            description: "Consolidation of British East India Company control",
+            type: "colonial-period",
+          },
+          {
+            year: "1857-1858",
+            title: "Indian Rebellion",
+            description: "First War of Independence against British rule",
+            type: "civil-conflict",
+          },
+          {
+            year: "1858-1885",
+            title: "Crown Rule Begins",
+            description: "Direct British government rule established",
+            type: "colonial-period",
+          },
+          {
+            year: "1885-1914",
+            title: "Nationalist Movement",
+            description:
+              "Indian National Congress formation and growing independence movement",
+            type: "colonial-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I",
+            description: "Indian participation in British war effort",
+            type: "war-period",
+          },
+          {
+            year: "1918-1939",
+            title: "Independence Struggle",
+            description:
+              "Gandhi's non-violent resistance and civil disobedience",
+            type: "civil-conflict",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description: "Divided response to British war participation",
+            type: "war-period",
+          },
+          {
+            year: "1947",
+            title: "Independence & Partition",
+            description:
+              "Independence accompanied by massive communal violence",
+            type: "civil-conflict",
+          },
+          {
+            year: "1947-1962",
+            title: "Nehru Era",
+            description: "Early years of independence and non-alignment",
+            type: "peace-period",
+          },
+          {
+            year: "1947-1948",
+            title: "First Kashmir War",
+            description: "First war with Pakistan over Kashmir",
+            type: "war-period",
+          },
+          {
+            year: "1962",
+            title: "Sino-Indian War",
+            description:
+              "Border conflict with China resulting in Indian defeat",
+            type: "war-period",
+          },
+          {
+            year: "1965",
+            title: "Second Kashmir War",
+            description: "Second war with Pakistan over Kashmir",
+            type: "war-period",
+          },
+          {
+            year: "1971",
+            title: "Bangladesh Liberation War",
+            description: "War with Pakistan leading to Bangladesh independence",
+            type: "war-period",
+          },
+          {
+            year: "1975-1984",
+            title: "Internal Conflicts",
+            description: "Emergency period and growing insurgencies",
+            type: "civil-conflict",
+          },
+          {
+            year: "1984",
+            title: "Operation Blue Star",
+            description: "Military action in Golden Temple and Sikh insurgency",
+            type: "civil-conflict",
+          },
+          {
+            year: "1989-2003",
+            title: "Kashmir Insurgency Peak",
+            description: "Peak years of Kashmir conflict and Kargil War (1999)",
+            type: "civil-conflict",
+          },
+          {
+            year: "2003-2025",
+            title: "Economic Rise",
+            description: "Economic growth with ongoing border tensions",
+            type: "peace-period",
+          },
+        ],
+        Pakistan: [
+          {
+            year: "1947-1948",
+            title: "Independence & Partition",
+            description:
+              "Creation of Pakistan from British India; communal violence and refugee crisis",
+            type: "war-period",
+          },
+          {
+            year: "1949-1954",
+            title: "Early State Formation",
+            description:
+              "Political consolidation and drafting of first constitution",
+            type: "peace-period",
+          },
+          {
+            year: "1955-1958",
+            title: "Provincial Reorganization",
+            description:
+              "One Unit policy merges provinces; political tensions rise",
+            type: "peace-period",
+          },
+          {
+            year: "1958-1962",
+            title: "First Military Rule",
+            description: "Ayub Khan’s coup and centralized governance",
+            type: "peace-period",
+          },
+          {
+            year: "1965",
+            title: "Second Indo-Pak War",
+            description: "Conflict with India over Kashmir",
+            type: "war-period",
+          },
+          {
+            year: "1966-1969",
+            title: "Political Crisis",
+            description:
+              "Protests and demands for greater autonomy in East Pakistan",
+            type: "peace-period",
+          },
+          {
+            year: "1970",
+            title: "Historic Elections",
+            description: "Victory of Awami League sparks East-West tensions",
+            type: "peace-period",
+          },
+          {
+            year: "1971",
+            title: "Bangladesh Liberation War",
+            description: "War with India leading to secession of East Pakistan",
+            type: "war-period",
+          },
+          {
+            year: "1972-1976",
+            title: "Reconstruction Under Bhutto",
+            description: "Nationalization and constitutional reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1977",
+            title: "Military Coup",
+            description: "Zia-ul-Haq ousts Bhutto; political unrest",
+            type: "civil-conflict",
+          },
+          {
+            year: "1979-1989",
+            title: "Soviet-Afghan War Involvement",
+            description: "Support for Afghan mujahideen; refugee influx",
+            type: "war-period",
+          },
+          {
+            year: "1990-1998",
+            title: "Democratic Turbulence",
+            description: "Alternating governments; nuclear tests",
+            type: "peace-period",
+          },
+          {
+            year: "1999",
+            title: "Kargil Conflict",
+            description: "Limited war with India in Kashmir",
+            type: "war-period",
+          },
+          {
+            year: "2000-2001",
+            title: "Military-Led Stability",
+            description: "Musharraf consolidates power",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2014",
+            title: "War on Terror Era",
+            description:
+              "Terrorism surge and military operations in tribal areas",
+            type: "war-period",
+          },
+          {
+            year: "2015-2019",
+            title: "Counterterror Gains",
+            description: "Decline in militant attacks; CPEC projects begin",
+            type: "peace-period",
+          },
+          {
+            year: "2020-2025",
+            title: "Political & Economic Strain",
+            description: "Economic crisis and protests amid regional tensions",
+            type: "peace-period",
+          },
+        ],
+        SouthAfrica: [
+          {
+            year: "1910-1913",
+            title: "Union Formation",
+            description:
+              "British colonies unite into the Union of South Africa",
+            type: "peace-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I Participation",
+            description: "South African forces fight in Africa and Europe",
+            type: "war-period",
+          },
+          {
+            year: "1919-1923",
+            title: "Post-War Recovery",
+            description: "Economic rebuilding and political consolidation",
+            type: "peace-period",
+          },
+          {
+            year: "1924-1933",
+            title: "Industrial Growth",
+            description: "Expansion of mining and manufacturing industries",
+            type: "peace-period",
+          },
+          {
+            year: "1934-1938",
+            title: "Political Realignment",
+            description: "United Party dominance and early apartheid policies",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description: "South African troops fight in North Africa and Italy",
+            type: "war-period",
+          },
+          {
+            year: "1946-1947",
+            title: "Post-War Adjustments",
+            description: "Economic boom and veterans reintegration",
+            type: "peace-period",
+          },
+          {
+            year: "1948-1959",
+            title: "Early Apartheid Era",
+            description: "National Party formalizes racial segregation",
+            type: "peace-period",
+          },
+          {
+            year: "1960",
+            title: "Sharpeville Massacre",
+            description: "Police open fire on anti-apartheid protesters",
+            type: "civil-conflict",
+          },
+          {
+            year: "1961-1975",
+            title: "High Apartheid",
+            description: "Intensified repression and economic growth",
+            type: "peace-period",
+          },
+          {
+            year: "1976",
+            title: "Soweto Uprising",
+            description: "Mass protests and violent crackdowns",
+            type: "civil-conflict",
+          },
+          {
+            year: "1977-1983",
+            title: "State Crackdown",
+            description: "Increased security measures and political arrests",
+            type: "peace-period",
+          },
+          {
+            year: "1984-1989",
+            title: "Mass Resistance",
+            description:
+              "Nationwide protests and growing international sanctions",
+            type: "civil-conflict",
+          },
+          {
+            year: "1990-1993",
+            title: "Transition Talks",
+            description:
+              "Nelson Mandela released; negotiations to end apartheid",
+            type: "peace-period",
+          },
+          {
+            year: "1994",
+            title: "Democratic Breakthrough",
+            description:
+              "First multiracial elections; Mandela becomes president",
+            type: "peace-period",
+          },
+          {
+            year: "1995-2010",
+            title: "Post-Apartheid Nation-Building",
+            description: "Truth and Reconciliation, economic challenges",
+            type: "peace-period",
+          },
+          {
+            year: "2011-2025",
+            title: "Modern Challenges",
+            description:
+              "Corruption scandals, inequality, and political shifts",
+            type: "peace-period",
+          },
+        ],
+        Canada: [
+          {
+            year: "1867-1872",
+            title: "Confederation & Early Growth",
+            description:
+              "Formation of the Dominion of Canada; addition of new provinces",
+            type: "peace-period",
+          },
+          {
+            year: "1873-1885",
+            title: "Nation-Building & Westward Expansion",
+            description:
+              "Construction of the Canadian Pacific Railway; Northwest Rebellion",
+            type: "civil-conflict",
+          },
+          {
+            year: "1886-1898",
+            title: "Industrial Expansion",
+            description: "Economic growth and urbanization",
+            type: "peace-period",
+          },
+          {
+            year: "1899-1902",
+            title: "Second Boer War",
+            description: "Canadian troops serve in South Africa",
+            type: "war-period",
+          },
+          {
+            year: "1903-1913",
+            title: "Pre-War Prosperity",
+            description: "Immigration boom and prairie settlement",
+            type: "peace-period",
+          },
+          {
+            year: "1914-1918",
+            title: "World War I",
+            description: "Major participation in European battles",
+            type: "war-period",
+          },
+          {
+            year: "1919-1928",
+            title: "Post-War Recovery",
+            description: "Economic growth and political reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1929-1938",
+            title: "Great Depression",
+            description: "Economic collapse and mass unemployment",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II",
+            description:
+              "Major Allied contributions in Europe and the Atlantic",
+            type: "war-period",
+          },
+          {
+            year: "1946-1959",
+            title: "Postwar Boom",
+            description:
+              "Economic growth, immigration, and infrastructure expansion",
+            type: "peace-period",
+          },
+          {
+            year: "1960-1969",
+            title: "Quiet Revolution & Social Change",
+            description: "Quebec modernization and national reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1970",
+            title: "October Crisis",
+            description: "FLQ separatist kidnappings; War Measures Act invoked",
+            type: "civil-conflict",
+          },
+          {
+            year: "1971-2000",
+            title: "Late 20th Century Prosperity",
+            description: "Economic diversification and multiculturalism",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2014",
+            title: "War on Terror Participation",
+            description: "Combat role in Afghanistan",
+            type: "war-period",
+          },
+          {
+            year: "2015-2019",
+            title: "Modern Canada",
+            description: "Focus on climate policy and immigration",
+            type: "peace-period",
+          },
+          {
+            year: "2020-2022",
+            title: "Pandemic Response",
+            description: "COVID-19 health and economic challenges",
+            type: "peace-period",
+          },
+          {
+            year: "2023-2025",
+            title: "Contemporary Canada",
+            description: "Balancing growth, trade, and foreign policy",
+            type: "peace-period",
+          },
+        ],
+        Mexico: [
+          {
+            year: "1821-1835",
+            title: "Early Independence",
+            description:
+              "Independence from Spain; political instability and territorial losses",
+            type: "civil-conflict",
+          },
+          {
+            year: "1836-1845",
+            title: "Texas Revolution & Aftermath",
+            description:
+              "Loss of Texas; internal conflicts and foreign interventions",
+            type: "war-period",
+          },
+          {
+            year: "1846-1848",
+            title: "Mexican-American War",
+            description:
+              "War with United States; loss of half of national territory",
+            type: "war-period",
+          },
+          {
+            year: "1849-1857",
+            title: "Post-War Reconstruction",
+            description:
+              "Political reorganization and economic recovery efforts",
+            type: "peace-period",
+          },
+          {
+            year: "1858-1867",
+            title: "War of Reform & French Intervention",
+            description: "Civil war and French occupation under Maximilian",
+            type: "war-period",
+          },
+          {
+            year: "1868-1875",
+            title: "Republic Restored",
+            description: "Juárez government restoration and liberal reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1876-1910",
+            title: "Porfiriato Era",
+            description:
+              "Porfirio Díaz dictatorship; modernization and repression",
+            type: "peace-period",
+          },
+          {
+            year: "1910-1920",
+            title: "Mexican Revolution",
+            description:
+              "Violent overthrow of dictatorship; multiple factions fighting",
+            type: "civil-conflict",
+          },
+          {
+            year: "1921-1938",
+            title: "Revolutionary Reconstruction",
+            description:
+              "Land reforms, nationalization, and political consolidation",
+            type: "peace-period",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II Participation",
+            description:
+              "Alliance with Allies; economic growth from wartime production",
+            type: "war-period",
+          },
+          {
+            year: "1946-1967",
+            title: "Mexican Miracle",
+            description: "Rapid economic growth and industrialization",
+            type: "peace-period",
+          },
+          {
+            year: "1968",
+            title: "Tlatelolco Massacre",
+            description: "Government massacre of student protesters",
+            type: "civil-conflict",
+          },
+          {
+            year: "1969-1993",
+            title: "PRI Dominance",
+            description: "One-party rule with economic crises and reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1994",
+            title: "Zapatista Uprising",
+            description: "Indigenous rebellion in Chiapas",
+            type: "civil-conflict",
+          },
+          {
+            year: "1995-1999",
+            title: "Economic Recovery",
+            description: "Post-NAFTA growth and political opening",
+            type: "peace-period",
+          },
+          {
+            year: "2000-2005",
+            title: "Democratic Transition",
+            description: "End of PRI dominance; Vicente Fox presidency",
+            type: "peace-period",
+          },
+          {
+            year: "2006-2025",
+            title: "Drug War Era",
+            description:
+              "Ongoing conflict with cartels; thousands of deaths annually",
+            type: "civil-conflict",
+          },
+        ],
+
+        Jamaica: [
+          {
+            year: "1655-1670",
+            title: "English Conquest",
+            description:
+              "British takeover from Spain; piracy and early plantation development",
+            type: "war-period",
+          },
+          {
+            year: "1671-1739",
+            title: "Colonial Expansion",
+            description: "Sugar plantation economy and slave importation",
+            type: "peace-period",
+          },
+          {
+            year: "1739-1740",
+            title: "First Maroon War",
+            description: "Conflict with escaped slave communities",
+            type: "civil-conflict",
+          },
+          {
+            year: "1741-1795",
+            title: "Peak Slavery Period",
+            description: "Height of sugar economy and plantation system",
+            type: "peace-period",
+          },
+          {
+            year: "1796",
+            title: "Second Maroon War",
+            description: "Final major conflict with Maroon communities",
+            type: "civil-conflict",
+          },
+          {
+            year: "1797-1837",
+            title: "Late Colonial Period",
+            description: "Economic decline and growing abolition pressure",
+            type: "peace-period",
+          },
+          {
+            year: "1831-1832",
+            title: "Baptist War",
+            description: "Major slave rebellion led by Sam Sharpe",
+            type: "civil-conflict",
+          },
+          {
+            year: "1838-1937",
+            title: "Post-Emancipation Era",
+            description:
+              "Transition from slavery to wage labor; economic struggles",
+            type: "peace-period",
+          },
+          {
+            year: "1938",
+            title: "Labor Riots",
+            description: "Islandwide protests over working conditions",
+            type: "civil-conflict",
+          },
+          {
+            year: "1939-1945",
+            title: "World War II Participation",
+            description: "British colony contributes troops and resources",
+            type: "war-period",
+          },
+          {
+            year: "1946-1961",
+            title: "Path to Independence",
+            description:
+              "Self-government development and Federation participation",
+            type: "peace-period",
+          },
+          {
+            year: "1962-1979",
+            title: "Early Independence",
+            description: "Nation-building and economic development efforts",
+            type: "peace-period",
+          },
+          {
+            year: "1980",
+            title: "Election Violence",
+            description: "Political warfare between JLP and PNP",
+            type: "civil-conflict",
+          },
+          {
+            year: "1981-1989",
+            title: "Structural Adjustment",
+            description: "Economic reforms and social tensions",
+            type: "peace-period",
+          },
+          {
+            year: "1990-2009",
+            title: "Democratization",
+            description: "Political stability and tourism growth",
+            type: "peace-period",
+          },
+          {
+            year: "2010-2025",
+            title: "Modern Jamaica",
+            description:
+              "Gang violence challenges and economic diversification",
+            type: "peace-period",
+          },
+        ],
+
+        CostaRica: [
+          {
+            year: "1821-1842",
+            title: "Independence & Early Nationhood",
+            description:
+              "Independence from Spain; conflicts with neighboring states",
+            type: "civil-conflict",
+          },
+          {
+            year: "1843-1849",
+            title: "Coffee Economy Emergence",
+            description: "Agricultural development and political consolidation",
+            type: "peace-period",
+          },
+          {
+            year: "1850-1855",
+            title: "William Walker Threat",
+            description: "Defense against American filibuster invasion",
+            type: "war-period",
+          },
+          {
+            year: "1856-1889",
+            title: "Liberal Republic",
+            description: "Coffee prosperity and democratic institutions",
+            type: "peace-period",
+          },
+          {
+            year: "1890-1919",
+            title: "Banana Republic Era",
+            description:
+              "United Fruit Company influence and railroad development",
+            type: "peace-period",
+          },
+          {
+            year: "1917-1919",
+            title: "Tinoco Dictatorship",
+            description: "Military coup and brief authoritarian rule",
+            type: "civil-conflict",
+          },
+          {
+            year: "1920-1947",
+            title: "Democratic Restoration",
+            description: "Return to civilian rule and social reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1948",
+            title: "Civil War",
+            description: "Disputed election leads to brief civil conflict",
+            type: "civil-conflict",
+          },
+          {
+            year: "1949-1978",
+            title: "Social Democratic Period",
+            description: "Abolition of army; welfare state development",
+            type: "peace-period",
+          },
+          {
+            year: "1979-1989",
+            title: "Central American Crisis",
+            description: "Refugee influx from regional conflicts",
+            type: "peace-period",
+          },
+          {
+            year: "1987",
+            title: "Arias Peace Process",
+            description: "Nobel Prize for regional peace negotiations",
+            type: "peace-period",
+          },
+          {
+            year: "1990-2009",
+            title: "Economic Diversification",
+            description: "Shift from agriculture to services and technology",
+            type: "peace-period",
+          },
+          {
+            year: "2010-2025",
+            title: "Modern Costa Rica",
+            description: "Environmental leadership and political stability",
+            type: "peace-period",
+          },
+        ],
+
+        Chile: [
+          {
+            year: "1810-1818",
+            title: "Independence War",
+            description: "Struggle for independence from Spanish rule",
+            type: "war-period",
+          },
+          {
+            year: "1819-1829",
+            title: "Early Republic Conflicts",
+            description: "Political instability and civil wars",
+            type: "civil-conflict",
+          },
+          {
+            year: "1830-1860",
+            title: "Conservative Republic",
+            description: "Political stability and economic growth",
+            type: "peace-period",
+          },
+          {
+            year: "1861-1890",
+            title: "Liberal Period",
+            description: "Democratic reforms and territorial expansion",
+            type: "peace-period",
+          },
+          {
+            year: "1879-1884",
+            title: "War of the Pacific",
+            description: "Conflict with Peru and Bolivia; territorial gains",
+            type: "war-period",
+          },
+          {
+            year: "1885-1890",
+            title: "Post-War Expansion",
+            description: "Nitrate boom and economic prosperity",
+            type: "peace-period",
+          },
+          {
+            year: "1891",
+            title: "Civil War of 1891",
+            description: "Congressional forces defeat presidential army",
+            type: "civil-conflict",
+          },
+          {
+            year: "1892-1924",
+            title: "Parliamentary Republic",
+            description: "Political instability and economic modernization",
+            type: "peace-period",
+          },
+          {
+            year: "1925-1931",
+            title: "Constitutional Reform",
+            description: "New constitution and brief stability",
+            type: "peace-period",
+          },
+          {
+            year: "1932-1937",
+            title: "Socialist Republic & Recovery",
+            description: "Brief socialist government and economic recovery",
+            type: "civil-conflict",
+          },
+          {
+            year: "1938-1945",
+            title: "World War II Neutrality",
+            description: "Late Allied support and internal development",
+            type: "peace-period",
+          },
+          {
+            year: "1946-1969",
+            title: "Democratic Consolidation",
+            description: "Political stability and social reforms",
+            type: "peace-period",
+          },
+          {
+            year: "1970-1973",
+            title: "Allende Government",
+            description: "Socialist policies and political polarization",
+            type: "peace-period",
+          },
+          {
+            year: "1973-1990",
+            title: "Pinochet Dictatorship",
+            description: "Military coup and authoritarian rule",
+            type: "civil-conflict",
+          },
+          {
+            year: "1991-2010",
+            title: "Return to Democracy",
+            description: "Democratic transition and economic growth",
+            type: "peace-period",
+          },
+          {
+            year: "2011-2019",
+            title: "Student Movement Era",
+            description: "Social protests and inequality debates",
+            type: "peace-period",
+          },
+          {
+            year: "2019-2020",
+            title: "Social Unrest",
+            description: "Nationwide protests against inequality",
+            type: "civil-conflict",
+          },
+          {
+            year: "2021-2025",
+            title: "Constitutional Convention",
+            description: "New constitution process and political changes",
+            type: "peace-period",
+          },
+        ],
+
+        Vietnam: [
+          {
+            year: "1858-1883",
+            title: "French Conquest",
+            description: "French colonial expansion and resistance",
+            type: "war-period",
+          },
+          {
+            year: "1884-1940",
+            title: "French Colonial Rule",
+            description: "Colonial administration and economic exploitation",
+            type: "peace-period",
+          },
+          {
+            year: "1940-1945",
+            title: "Japanese Occupation",
+            description: "World War II occupation and resistance movements",
+            type: "war-period",
+          },
+          {
+            year: "1945-1946",
+            title: "August Revolution",
+            description: "Ho Chi Minh declares independence; brief autonomy",
+            type: "civil-conflict",
+          },
+          {
+            year: "1946-1954",
+            title: "First Indochina War",
+            description: "War against French colonial forces",
+            type: "war-period",
+          },
+          {
+            year: "1954-1955",
+            title: "Geneva Partition",
+            description: "Temporary division at 17th parallel",
+            type: "peace-period",
+          },
+          {
+            year: "1955-1975",
+            title: "Vietnam War",
+            description: "Conflict between North and South Vietnam",
+            type: "war-period",
+          },
+          {
+            year: "1975-1978",
+            title: "Reunification",
+            description: "Communist victory and national unification",
+            type: "peace-period",
+          },
+          {
+            year: "1978-1979",
+            title: "Cambodian War",
+            description: "Invasion of Cambodia to remove Khmer Rouge",
+            type: "war-period",
+          },
+          {
+            year: "1979",
+            title: "Sino-Vietnamese War",
+            description: "Brief border war with China",
+            type: "war-period",
+          },
+          {
+            year: "1980-1985",
+            title: "Economic Crisis",
+            description: "Post-war economic difficulties and isolation",
+            type: "peace-period",
+          },
+          {
+            year: "1986-1990",
+            title: "Doi Moi Reforms",
+            description: "Economic liberalization and opening",
+            type: "peace-period",
+          },
+          {
+            year: "1991-2000",
+            title: "International Integration",
+            description: "Diplomatic normalization and economic growth",
+            type: "peace-period",
+          },
+          {
+            year: "2001-2010",
+            title: "Economic Boom",
+            description: "Rapid industrialization and export growth",
+            type: "peace-period",
+          },
+          {
+            year: "2011-2025",
+            title: "Middle-Income Development",
+            description: "Continued growth and regional influence",
+            type: "peace-period",
+          },
+        ],
+      };
+
+      // Enhanced JavaScript with more animations and interactions
+      class TimelineExplorer {
+        constructor() {
+          this.modal = document.getElementById("timelineModal");
+          this.closeBtn = document.querySelector(".close");
+          this.countryItems = document.querySelectorAll(".country-item");
+          this.loadingScreen = document.querySelector(".loading-screen");
+          this.particles = [];
+          this.init();
+        }
+
+        init() {
+          this.createParticles();
+          this.showLoadingScreen();
+          this.attachEventListeners();
+          this.animateCountryItems();
+          setTimeout(() => this.hideLoadingScreen(), 2000);
+        }
+
+        createParticles() {
+          const particlesContainer = document.querySelector(".particles");
+          const shapesContainer = document.querySelector(".floating-shapes");
+
+          // Create star and dot particles
+          for (let i = 0; i < 40; i++) {
+            const particle = document.createElement("div");
+            particle.className = i % 3 === 0 ? "particle star" : "particle dot";
+            particle.style.left = Math.random() * 100 + "%";
+            particle.style.animationDelay = Math.random() * 8 + "s";
+            particle.style.animationDuration = Math.random() * 4 + 6 + "s";
+            particlesContainer.appendChild(particle);
+          }
+
+          // Create floating geometric shapes
+          const shapeTypes = ["triangle", "circle", "diamond", "hexagon"];
+          for (let i = 0; i < 20; i++) {
+            const shape = document.createElement("div");
+            const shapeType =
+              shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+            shape.className = `shape ${shapeType}`;
+            shape.style.left = Math.random() * 100 + "%";
+            shape.style.animationDelay = Math.random() * 20 + "s";
+            shape.style.animationDuration = Math.random() * 10 + 20 + "s";
+            shapesContainer.appendChild(shape);
+          }
+        }
+
+        showLoadingScreen() {
+          this.loadingScreen.style.display = "flex";
+        }
+
+        hideLoadingScreen() {
+          this.loadingScreen.classList.add("hidden");
+          setTimeout(() => {
+            this.loadingScreen.style.display = "none";
+          }, 800);
+        }
+
+        animateCountryItems() {
+          this.countryItems.forEach((item, index) => {
+            item.style.animationDelay = `${1 + index * 0.15}s`;
+
+            // Add enhanced hover effects
+            this.addEnhancedHoverEffect(item);
+
+            // Add click ripple effect
+            this.addRippleEffect(item);
+          });
+        }
+
+        addEnhancedHoverEffect(item) {
+          const flag = item.querySelector(".flag");
+          const ropeSegment = item.querySelector(".rope-segment");
+          const countryName = item.querySelector(".country-name");
+
+          item.addEventListener("mouseenter", () => {
+            // Enhanced flag animation
+            flag.style.transform = "scale(1.15) rotateY(10deg) rotateX(5deg)";
+            flag.style.boxShadow =
+              "0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(102, 126, 234, 0.3)";
+
+            // Rope segment enhancement
+            ropeSegment.style.transform = "rotateZ(3deg) scaleY(1.2)";
+            ropeSegment.style.boxShadow = "2px 2px 8px rgba(0,0,0,0.4)";
+
+            // Country name glow effect
+            countryName.style.textShadow =
+              "2px 2px 15px rgba(255,255,255,0.8), 0 0 10px rgba(102, 126, 234, 0.6)";
+            countryName.style.transform = "translateY(-5px) scale(1.05)";
+          });
+
+          item.addEventListener("mouseleave", () => {
+            flag.style.transform = "";
+            flag.style.boxShadow = "";
+            ropeSegment.style.transform = "";
+            ropeSegment.style.boxShadow = "";
+            countryName.style.textShadow = "";
+            countryName.style.transform = "";
+          });
+        }
+
+        addRippleEffect(item) {
+          item.addEventListener("click", (e) => {
+            const ripple = document.createElement("span");
+            const rect = item.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.6);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        left: ${x}px;
+                        top: ${y}px;
+                        width: ${size}px;
+                        height: ${size}px;
+                        pointer-events: none;
+                        z-index: 1000;
+                    `;
+
+            item.style.position = "relative";
+            item.style.overflow = "hidden";
+            item.appendChild(ripple);
+
+            setTimeout(() => {
+              ripple.remove();
+            }, 600);
+          });
+        }
+
+        attachEventListeners() {
+          // Country item clicks with enhanced animation
+          this.countryItems.forEach((item) => {
+            item.addEventListener("click", (e) => {
+              const country = item.getAttribute("data-country");
+              this.showTimeline(country);
+
+              // Add click animation
+              item.style.transform = "translateY(-8px) scale(1.02)";
+              setTimeout(() => {
+                item.style.transform = "";
+              }, 200);
+            });
+          });
+
+          // Enhanced close button(likely not working)
+          this.closeBtn.addEventListener("click", () => {
+            this.hideModal();
+          });
+
+          // Click outside to close(likely not working)
+          window.addEventListener("click", (event) => {
+            if (event.target === this.modal) {
+              this.hideModal();
+            }
+          });
+
+          // Keyboard navigation
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && this.modal.style.display === "block") {
+              this.hideModal();
+            }
+          });
+        }
+
+        showTimeline(country) {
+          const countryTitle = document.getElementById("countryTitle");
+          const timelineEvents = document.getElementById("timelineEvents");
+
+          countryTitle.textContent = country;
+          timelineEvents.innerHTML = "";
+
+          const events = timelineData[country] || [];
+
+          // Show modal with animation
+          this.modal.style.display = "block";
+
+          // Animate timeline items
+          events.forEach((event, index) => {
+            const eventDiv = document.createElement("div");
+            eventDiv.className = `timeline-item ${event.type}`;
+            eventDiv.style.animationDelay = `${index * 0.1}s`;
+
+            eventDiv.innerHTML = `
+                        <div class="timeline-date">${event.year}</div>
+                        <div class="timeline-title">${event.title}</div>
+                        <div class="timeline-description">${event.description}</div>
+                    `;
+
+            // Add click animation to timeline items
+            eventDiv.addEventListener("click", () => {
+              eventDiv.style.transform = "translateX(20px) scale(1.03)";
+              eventDiv.style.boxShadow = "0 12px 30px rgba(0,0,0,0.2)";
+              setTimeout(() => {
+                eventDiv.style.transform = "";
+                eventDiv.style.boxShadow = "";
+              }, 300);
+            });
+
+            timelineEvents.appendChild(eventDiv);
+          });
+        }
+
+        hideModal() {
+          const timelineContent = document.querySelector(".timeline-content");
+          timelineContent.style.animation =
+            "modalSlideOut 0.3s cubic-bezier(0.4, 0, 0.6, 1) forwards";
+
+          setTimeout(() => {
+            this.modal.style.display = "none";
+            timelineContent.style.animation = "";
+          }, 300);
+        }
+      }
+
+      // Add modal slide out animation and trail fade
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes modalSlideOut {
+                from {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.9) translateY(20px);
+                }
+            }
+            
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes trailFade {
+                0% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(0);
+                }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Initialize the application
+      document.addEventListener("DOMContentLoaded", () => {
+        new TimelineExplorer();
+      });
+
+      // Add dynamic background interaction with lunar theme
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
+
+        document.body.style.backgroundPosition = `${mouseX * 20}% ${
+          mouseY * 20
+        }%`;
+
+        // Create trailing effect
+        if (Math.random() > 0.98) {
+          const trail = document.createElement("div");
+          trail.style.cssText = `
+                    position: fixed;
+                    width: 2px;
+                    height: 2px;
+                    background: rgba(199, 210, 254, 0.6);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                    z-index: 1;
+                    animation: trailFade 1s ease-out forwards;
+                `;
+          document.body.appendChild(trail);
+          setTimeout(() => trail.remove(), 1000);
+        }
+      });
+
+      // Add scroll animations for timeline items
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation =
+              "timelineItemSlide 0.6s ease forwards";
+          }
+        });
+      }, observerOptions);
+
+      // Observe timeline items when modal opens
+      const originalShowTimeline = TimelineExplorer.prototype.showTimeline;
+      TimelineExplorer.prototype.showTimeline = function (country) {
+        originalShowTimeline.call(this, country);
+
+        setTimeout(() => {
+          const timelineItems = document.querySelectorAll(".timeline-item");
+          timelineItems.forEach((item) => {
+            observer.observe(item);
+          });
+        }, 100);
+      };
+    </script>
+    <script>
+      // Flags & Peace Symbols
+      const flags = [
+        "🇺🇸",
+        "🇬🇧",
+        "🇫🇷",
+        "🇩🇪",
+        "🇷🇺",
+        "🇨🇳",
+        "🇯🇵",
+        "🇮🇳",
+        "🇵🇰",
+        "🇿🇦",
+        "🇨🇦",
+        "🇲🇽",
+        "🇯🇲",
+        "🇨🇷",
+        "🇨🇱",
+        "🇻🇳",
+      ];
+      const peaceSymbols = ["☮️", "🕊️", "🌸", "🤝", "❤️", "🌍", "🌈"];
+
+      const floatingContainer = document.querySelector(".floating-elements");
+
+      // Create floating items
+      function createFloatItem(content) {
+        const item = document.createElement("div");
+        item.classList.add("float-item");
+        item.textContent = content;
+        item.style.left = Math.random() * 100 + "vw";
+        item.style.fontSize = Math.random() * 1.5 + 1.2 + "rem";
+        item.style.animationDuration = Math.random() * 12 + 10 + "s";
+        item.style.animationDelay = Math.random() * 5 + "s";
+        floatingContainer.appendChild(item);
+
+        // Remove after animation
+        setTimeout(() => {
+          item.remove();
+        }, 20000);
+      }
+
+      // Loop for continuous effect
+      setInterval(() => {
+        const randomSet = Math.random() > 0.5 ? flags : peaceSymbols;
+        const randomItem =
+          randomSet[Math.floor(Math.random() * randomSet.length)];
+        createFloatItem(randomItem);
+      }, 800);
+    </script>
+
+    <script>
+      (function () {
+        const FLAGS = [
+          "☮️", "🕊️", "🌸", "🤝", "❤️", "🌍", "🌈"
+        ];
+        const SYMBOLS = ["☮️", "🕊️", "🌸", "🤝", "❤️", "🌍", "🌈"];
+
+        function spawnEmoji(char, type, layer) {
+          const el = document.createElement("span");
+          el.className = `float-emoji ${type}`;
+          el.textContent = char;
+          el.style.left = Math.random() * 100 + "vw";
+          const s = 0.9 + Math.random() * 0.9;
+          const sEnd = s + Math.random() * 0.3;
+          el.style.setProperty("--s", s);
+          el.style.setProperty("--sEnd", sEnd);
+          const xDrift =
+            (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 25);
+          el.style.setProperty("--xDrift", xDrift + "vw");
+          const cw = Math.random() < 0.5 ? 1 : -1;
+          el.style.setProperty("--r0", Math.random() * 60 * cw + "deg");
+          el.style.setProperty(
+            "--r1",
+            cw * (300 + Math.random() * 240) + "deg"
+          );
+          const dur = 12 + Math.random() * 16;
+          const delay = Math.random() * 4;
+          el.style.animationDuration = dur + "s";
+          el.style.animationDelay = delay + "s";
+          el.style.opacity = (0.65 + Math.random() * 0.3).toFixed(2);
+          layer.appendChild(el);
+          setTimeout(() => el.remove(), (dur + delay + 1) * 1000);
+        }
+
+        // Remove warm start loop:
+        // for (let i = 0; i < 16; i++) { ... }
+
+        // Instead, just let the interval handle spawning
+        function startFloating() {
+          let layer = document.querySelector(".floating-emoji-layer");
+          if (!layer) {
+            layer = document.createElement("div");
+            layer.className = "floating-emoji-layer";
+            document.body.appendChild(layer);
+          }
+
+          // spawn one immediately
+          tick(layer);
+
+          // spawn with randomised interval
+          setInterval(() => {
+            tick(layer);
+          }, 1300 + Math.random() * 600); // 1.3s–1.9s
+        }
+
+        function tick(layer) {
+          const set = Math.random() < 0.55 ? FLAGS : SYMBOLS;
+          spawnEmoji(
+            set[Math.floor(Math.random() * set.length)],
+            set === FLAGS ? "flag" : "symbol",
+            layer
+          );
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", startFloating);
+        } else {
+          startFloating();
+        }
+      })();
+      const menuIcon = document.getElementById("menuIcon");
+      const navLinks = document.getElementById("navLinks");
+
+      menuIcon.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        menuIcon.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>

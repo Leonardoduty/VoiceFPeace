@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World Peace Timeline 1850-Present</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Navbar container */
+      .navbar {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1001; /* keeps navbar above other elements */
+      }
+
+      /* Menu icon (hamburger) */
+      .menu-icon {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 5px;
+        position: relative;
+        z-index: 1002; /* ensures it's always clickable */
+      }
+
+      .menu-icon span {
+        height: 3px;
+        width: 25px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+
+      /* Navigation links */
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        height: 100%;
+        width: 150px;
+        background: #444;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: right 0.3s ease;
+        z-index: 1000; /* ensures menu appears above content */
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      /* Animation for icon when active */
+      .menu-icon.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .menu-icon.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .menu-icon.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInDown 1s ease-out;
+      }
+
+      .header h1 {
+        font-size: 3.5rem;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 20px;
+      }
+
+      .peace-emoji {
+        font-size: 4rem;
+        animation: bounce 2s infinite;
+      }
+
+      .timeline {
+        position: relative;
+        padding: 20px 0;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          #ff6b6b,
+          #4ecdc4,
+          #45b7d1,
+          #96ceb4,
+          #feca57
+        );
+        border-radius: 2px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      }
+
+      .timeline-item {
+        position: relative;
+        margin: 50px 0;
+        opacity: 0;
+        transform: translateY(50px);
+        animation: slideIn 0.6s ease-out forwards;
+      }
+
+      .timeline-item:nth-child(odd) {
+        margin-left: 0;
+        margin-right: 50%;
+        text-align: right;
+      }
+
+      .timeline-item:nth-child(even) {
+        margin-left: 50%;
+        margin-right: 0;
+        text-align: left;
+      }
+
+      .timeline-content {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .timeline-content:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 1);
+      }
+
+      .timeline-item:nth-child(odd) .timeline-content::after {
+        content: "";
+        position: absolute;
+        right: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border: 15px solid transparent;
+        border-left-color: rgba(255, 255, 255, 0.95);
+      }
+
+      .timeline-item:nth-child(even) .timeline-content::after {
+        content: "";
+        position: absolute;
+        left: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border: 15px solid transparent;
+        border-right-color: rgba(255, 255, 255, 0.95);
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        z-index: 10;
+        animation: pulse 2s infinite;
+      }
+
+      .year {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .event-emoji {
+        font-size: 2rem;
+        margin-right: 10px;
+        animation: rotate 0.5s ease-in-out;
+      }
+
+      .event-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #34495e;
+        margin-bottom: 8px;
+      }
+
+      .event-description {
+        color: #7f8c8d;
+        line-height: 1.6;
+        font-size: 1rem;
+      }
+
+      .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .floating-emoji {
+        position: absolute;
+        font-size: 2rem;
+        animation: float 10s infinite linear;
+        opacity: 0.3;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-20px);
+        }
+        60% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes slideIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+          transform: translateX(-50%) scale(1);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+          transform: translateX(-50%) scale(1.1);
+        }
+        100% {
+          box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+          transform: translateX(-50%) scale(1);
+        }
+      }
+
+      @keyframes rotate {
+        from {
+          transform: rotate(-10deg);
+        }
+        to {
+          transform: rotate(10deg);
+        }
+      }
+
+      @keyframes float {
+        from {
+          transform: translateY(100vh) rotate(0deg);
+        }
+        to {
+          transform: translateY(-100px) rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        /* Timeline Container */
+        .timeline {
+          position: relative;
+          margin: 0 auto;
+          padding: 20px 0;
+        }
+
+        /* Vertical Line in the Center */
+        .timeline::before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          width: 4px;
+          background: #ccc;
+          top: 0;
+          bottom: 0;
+          transform: translateX(-50%);
+        }
+
+        /* Timeline Item */
+        .timeline-item {
+          position: relative;
+          margin: 20px 0;
+        }
+
+        /* The Dot */
+        .timeline-dot {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 14px;
+          height: 14px;
+          background: #4caf50;
+          border-radius: 50%;
+          top: 20px;
+        }
+
+        /* Timeline Content Container */
+        .timeline-content {
+          width: 100%;
+        }
+
+        /* Row for Text + Image */
+        .timeline-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+        }
+
+        /* Text Area */
+        .timeline-text {
+          flex: 1;
+        }
+
+        /* Image Area */
+        .timeline-image {
+          flex: 0 0 auto;
+        }
+
+        .timeline-image img {
+          max-width: 200px;
+          height: auto;
+          border-radius: 8px;
+        }
+
+        /* Header Styling */
+        .header h1 {
+          font-size: 3rem;
+          text-align: center;
+        }
+
+        /* Responsive Adjustments for Mobile */
+        @media (max-width: 768px) {
+          .header h1 {
+            font-size: 2.5rem;
+          }
+
+          .timeline-row {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .timeline-image img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+          }
+
+          /* Move dot for mobile layout */
+          .timeline-dot {
+            left: 20px;
+            transform: none;
+          }
+
+          .timeline::before {
+            left: 27px;
+            transform: none;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <img src="../images/logo1.png" width="25"></img>
+      <div class="menu-icon" id="menuIcon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a href="../index.html">Home</a>
+      <a href="j.html">About Us</a>
+      <a href="charts.html">Charts</a>
+      <a href="game.html">Game</a>
+      <a href="index1.html">Timeline</a>
+    </div>
+    <div class="floating-elements"></div>
+
+    <div class="container">
+      <div class="header">
+        <h1>🌍 World Peace Timeline 🕊️</h1>
+        <p>Major Peaceful Developments Since 1850</p>
+        <div class="peace-emoji">
+          <img src="../images/logo1.png" width="200" />
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item" style="animation-delay: 0.2s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">📜</span>1864</div>
+                <div class="event-title">First Geneva Convention</div>
+                <div class="event-description">
+                  The foundation of international humanitarian law, establishing
+                  protection for wounded soldiers and medical personnel during
+                  warfare.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img src="../images/geneva.jpg" alt="First Geneva Convention" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 0.4s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">⚖️</span>1899</div>
+                <div class="event-title">First Hague Peace Conference</div>
+                <div class="event-description">
+                  International peace conference establishing laws of war and
+                  creating the Permanent Court of Arbitration for peaceful
+                  dispute resolution.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/Hauge.jpg"
+                  alt="First Hague Peace Conference"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 0.6s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🏛️</span>1920</div>
+                <div class="event-title">League of Nations Founded</div>
+                <div class="event-description">
+                  First worldwide intergovernmental organization aimed at
+                  maintaining world peace and preventing wars through collective
+                  security.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/LeagueofNations'.jpg"
+                  alt="League of Nations"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 0.8s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🕊️</span>1945</div>
+                <div class="event-title">United Nations Established</div>
+                <div class="event-description">
+                  Formation of the UN with the primary purpose of maintaining
+                  international peace and security, promoting international
+                  cooperation.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img src="../images/UN.jpg" alt="United Nations" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 1s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">📋</span>1948</div>
+                <div class="event-title">
+                  Universal Declaration of Human Rights
+                </div>
+                <div class="event-description">
+                  Fundamental document establishing universal human rights as
+                  the foundation for freedom, justice, and peace in the world.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/UniversalDeclarationHumanRights.jpg"
+                  width="300"
+                  alt="Universal Declaration of Human Rights"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 1.2s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🤝</span>1957</div>
+                <div class="event-title">
+                  Treaty of Rome - European Integration
+                </div>
+                <div class="event-description">
+                  Beginning of European integration process, transforming
+                  war-torn Europe into a peaceful union of democratic nations.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/Treatyofrome.jpg"
+                  width="300"
+                  alt="Treaty of Rome"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 1.4s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">☢️</span>1963</div>
+                <div class="event-title">Nuclear Test Ban Treaty</div>
+                <div class="event-description">
+                  Partial Test Ban Treaty banning nuclear weapons tests in
+                  atmosphere, outer space, and underwater, reducing nuclear
+                  tensions.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/NuclearTestban.jpg"
+                  width="300"
+                  alt="Nuclear Test Ban Treaty"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 1.6s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🧱</span>1989</div>
+                <div class="event-title">Fall of Berlin Wall</div>
+                <div class="event-description">
+                  Symbolic end of Cold War division, reuniting families and
+                  nations, marking a victory for peaceful democratic movements.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/FallofBerlinWall.jpg"
+                  width="300"
+                  alt="Fall of Berlin Wall"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 1.8s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🏛️</span>1998</div>
+                <div class="event-title">International Criminal Court</div>
+                <div class="event-description">
+                  Establishment of permanent tribunal to prosecute individuals
+                  for genocide, crimes against humanity, and war crimes.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/InternationalCriminalCourt.jpg"
+                  width="300"
+                  alt="International Criminal Court"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" style="animation-delay: 2s">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-row">
+              <div class="timeline-text">
+                <div class="year"><span class="event-emoji">🌱</span>2015</div>
+                <div class="event-title">Paris Climate Agreement</div>
+                <div class="event-description">
+                  Global cooperation to combat climate change, representing
+                  unprecedented international collaboration for planetary peace.
+                </div>
+              </div>
+              <div class="timeline-image">
+                <img
+                  src="../images/ParisClimateAggrement.jpg"
+                  width="300"
+                  alt="Paris Climate Agreement"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Create floating emojis
+      const floatingContainer = document.querySelector(".floating-elements");
+      const emojis = [
+        "🕊️",
+        "☮️",
+        "🤝",
+        "🌍",
+        "💚",
+        "⭐",
+        "✨",
+        "🌿",
+        "🦋",
+        "🌸",
+      ];
+
+      function createFloatingEmoji() {
+        const emoji = document.createElement("div");
+        emoji.className = "floating-emoji";
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.left = Math.random() * 100 + "%";
+        emoji.style.animationDuration = Math.random() * 10 + 10 + "s";
+        emoji.style.animationDelay = Math.random() * 5 + "s";
+        floatingContainer.appendChild(emoji);
+
+        // Remove emoji after animation completes
+        setTimeout(() => {
+          emoji.remove();
+        }, 20000);
+      }
+
+      // Create floating emojis every 3 seconds
+      setInterval(createFloatingEmoji, 3000);
+
+      // Initial batch of floating emojis
+      for (let i = 0; i < 5; i++) {
+        setTimeout(createFloatingEmoji, i * 1000);
+      }
+
+      // Add click effects to timeline items
+      document.querySelectorAll(".timeline-content").forEach((content) => {
+        content.addEventListener("click", function () {
+          this.style.transform = "translateY(-10px) scale(1.05)";
+          this.style.transition = "all 0.3s ease";
+
+          // Create celebration effect
+          const rect = this.getBoundingClientRect();
+          for (let i = 0; i < 10; i++) {
+            const sparkle = document.createElement("div");
+            sparkle.textContent = "✨";
+            sparkle.style.position = "fixed";
+            sparkle.style.left = rect.left + Math.random() * rect.width + "px";
+            sparkle.style.top = rect.top + Math.random() * rect.height + "px";
+            sparkle.style.fontSize = "1rem";
+            sparkle.style.pointerEvents = "none";
+            sparkle.style.zIndex = "1000";
+            sparkle.style.animation = "sparkle 1s ease-out forwards";
+            document.body.appendChild(sparkle);
+
+            setTimeout(() => sparkle.remove(), 1000);
+          }
+
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+      });
+
+      // Add sparkle animation
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes sparkle {
+                0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(1.5) rotate(180deg);
+                    opacity: 0;
+                }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Intersection Observer for scroll animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.animationPlayState = "running";
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll(".timeline-item").forEach((item) => {
+        observer.observe(item);
+      });
+      const menuIcon = document.getElementById("menuIcon");
+      const navLinks = document.getElementById("navLinks");
+
+      menuIcon.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+        menuIcon.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>
